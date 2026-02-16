@@ -29,13 +29,13 @@ export function AlphaBot({ isOpen, onClose, vaults }: AlphaBotProps) {
     {
       id: 'welcome',
       role: 'assistant',
-      content: "👋 Hey! I'm Alpha Bot, your AI assistant for IPOR Fusion vaults. I specialize in interest rate derivatives and multi-strategy yield optimization. Ask me about IPOR swaps, rate hedging, or how to maximize your DeFi returns!",
+      content: "👋 Hey! I'm Alpha Bot, your AI assistant for IPOR Fusion vaults. I specialize in interest rate derivatives and multi-strategy yield optimization. Ask me about IPOR swaps, rate hedging, vault strategies, or how to use the Python SDK for programmatic access!",
       timestamp: Date.now(),
       suggestions: [
         "What are IPOR interest rate swaps?",
         "Best strategies for stable yields?",
-        "How to hedge rate volatility?",
-        "Compare lending vs derivatives"
+        "Tell me about the Python SDK",
+        "How to hedge rate volatility?"
       ]
     }
   ])
@@ -80,6 +80,14 @@ IPOR Protocol Overview:
 - IPOR offers interest rate swaps where users can pay fixed/receive floating or vice versa
 - Key focus: stablecoins (USDC, USDT, DAI) with interest rate optimization
 
+IPOR Fusion Python SDK:
+- Official Python SDK (ipor-fusion.py) available on GitHub: https://github.com/IPOR-Labs/ipor-fusion.py
+- Enables programmatic vault creation, management, and strategy configuration
+- Supports all DeFi protocols including IPOR swaps, Aave, Compound, Uniswap, etc.
+- Key features: vault management, strategy integration, IPOR swap execution, analytics, auto-rebalancing
+- Installation: pip install ipor-fusion
+- Documentation: https://docs.ipor.io/build-on-fusion/developer-guide/open-source-repository
+
 Context:
 - User has ${vaults.length} active vaults
 - Available strategies: ${AVAILABLE_STRATEGIES.map(s => `${s.name} (${s.protocol}, APY: ${s.estimatedAPY}%, Risk: ${s.riskScore}/5)`).join(', ')}
@@ -91,7 +99,8 @@ Provide a concise, actionable response (2-3 paragraphs max). Include:
 1. Direct answer to their question with IPOR-specific insights where relevant
 2. Specific strategy recommendations with protocols and expected APYs
 3. Risk considerations and how IPOR derivatives can hedge risks
-4. Action items or suggested vault configurations
+4. If relevant to their question, mention the Python SDK for programmatic access
+5. Action items or suggested vault configurations
 
 Be conversational, confident, and use emojis sparingly. Emphasize IPOR's unique value proposition for interest rate management when appropriate.`
       
@@ -123,6 +132,9 @@ Be conversational, confident, and use emojis sparingly. Emphasize IPOR's unique 
   const generateSuggestions = (question: string, vaults: Vault[]): string[] => {
     const lowerQ = question.toLowerCase()
     
+    if (lowerQ.includes('sdk') || lowerQ.includes('python') || lowerQ.includes('api') || lowerQ.includes('programmatic')) {
+      return ["Show me SDK code example", "How to create vault with SDK?", "SDK documentation link?"]
+    }
     if (lowerQ.includes('ipor') || lowerQ.includes('swap') || lowerQ.includes('rate')) {
       return ["How do IPOR swaps work?", "Best rate hedging strategy?", "Pay fixed vs receive fixed?"]
     }
@@ -141,11 +153,14 @@ Be conversational, confident, and use emojis sparingly. Emphasize IPOR's unique 
     if (lowerQ.includes('hedge') || lowerQ.includes('protect') || lowerQ.includes('volatility')) {
       return ["Interest rate swaps?", "Diversification approach?", "Risk mitigation?"]
     }
+    if (lowerQ.includes('developer') || lowerQ.includes('build') || lowerQ.includes('integrate')) {
+      return ["Python SDK examples?", "API documentation?", "How to automate?"]
+    }
     
     return [
       "Optimize existing vaults",
       "Best IPOR swap position?",
-      "Risk vs reward breakdown"
+      "Tell me about the SDK"
     ]
   }
 

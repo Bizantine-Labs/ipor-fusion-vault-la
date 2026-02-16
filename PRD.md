@@ -62,6 +62,13 @@ This requires multiple interconnected views for vault configuration, strategy se
 - **Progression**: Open dialog → Browse tabs (Overview, Strategies, Benefits, Risks) → Read detailed explanations → Access external documentation link
 - **Success criteria**: Clear explanation of IPOR concepts, strategy types well-documented, risk disclosures comprehensive, external docs easily accessible
 
+### Python SDK Developer Tools
+- **Functionality**: Interactive dialog showcasing the IPOR Fusion Python SDK with installation instructions, code examples, IPOR swap examples, and resource links to GitHub and documentation
+- **Purpose**: Enable developers to build programmatic integrations with IPOR Fusion, automate vault management, and create custom applications
+- **Trigger**: User clicks "Developer Tools" button in header
+- **Progression**: Open dialog → Browse tabs (Quick Start, Examples, IPOR Swaps, Resources) → View code examples with copy-to-clipboard → Access GitHub repository and documentation links
+- **Success criteria**: SDK installation clear, code examples comprehensive and copyable, IPOR swap examples well-explained, external resources easily accessible
+
 ## Edge Case Handling
 
 - **Wallet Disconnection**: Save draft vault configurations to localStorage, restore on reconnection with clear notification

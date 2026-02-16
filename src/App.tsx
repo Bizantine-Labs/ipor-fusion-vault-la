@@ -6,6 +6,7 @@ import { VaultCard } from '@/components/VaultCard'
 import { CreateVaultDialog } from '@/components/CreateVaultDialog'
 import { AlphaBot } from '@/components/AlphaBot'
 import { IPORInfo } from '@/components/IPORInfo'
+import { DeveloperTools } from '@/components/DeveloperTools'
 import { VaultConfig, Vault } from '@/lib/types'
 import { calculateVaultRisk, calculateExpectedAPY } from '@/lib/strategies'
 import { Toaster } from '@/components/ui/sonner'
@@ -77,6 +78,7 @@ function App() {
               </div>
 
               <div className="flex items-center gap-3">
+                <DeveloperTools />
                 <IPORInfo />
                 <motion.div
                   animate={{ 
