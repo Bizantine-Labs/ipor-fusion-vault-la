@@ -48,6 +48,13 @@ This requires multiple interconnected views for vault configuration, strategy se
 - **Progression**: Display transaction list → Apply filters (date range, transaction type) → View transaction details → Export data if needed
 - **Success criteria**: All transactions displayed accurately, filters work correctly, export generates valid CSV/JSON
 
+### Alpha Bot - AI Strategy Assistant
+- **Functionality**: AI-powered chatbot that analyzes market conditions, vault performance, and user goals to provide personalized strategy recommendations and optimization insights
+- **Purpose**: Empowers users with intelligent guidance for vault creation and optimization, making complex DeFi strategies accessible
+- **Trigger**: User clicks "Ask Alpha Bot" button in header or opens chat panel
+- **Progression**: User asks question about strategies/markets → Bot analyzes current vaults and market data → Generates personalized recommendations with rationale → User can follow up with clarifying questions → Bot provides actionable insights with specific strategy allocations
+- **Success criteria**: Bot responds within 3 seconds, provides relevant strategy recommendations, suggests optimal allocations, explains risk/reward tradeoffs clearly
+
 ## Edge Case Handling
 
 - **Wallet Disconnection**: Save draft vault configurations to localStorage, restore on reconnection with clear notification

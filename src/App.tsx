@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { useKV } from '@github/spark/hooks'
 import { Button } from '@/components/ui/button'
-import { Plus, Vault as VaultIcon, ChartLine, Wallet } from '@phosphor-icons/react'
+import { Plus, Vault as VaultIcon, ChartLine, Wallet, Robot } from '@phosphor-icons/react'
 import { VaultCard } from '@/components/VaultCard'
 import { CreateVaultDialog } from '@/components/CreateVaultDialog'
+import { AlphaBot } from '@/components/AlphaBot'
 import { VaultConfig, Vault } from '@/lib/types'
 import { calculateVaultRisk, calculateExpectedAPY } from '@/lib/strategies'
 import { Toaster } from '@/components/ui/sonner'
@@ -13,6 +14,7 @@ function App() {
   const [vaults, setVaults] = useKV<Vault[]>('ipor-vaults', [])
   const [createDialogOpen, setCreateDialogOpen] = useState(false)
   const [selectedVault, setSelectedVault] = useState<Vault | null>(null)
+  const [alphaBotOpen, setAlphaBotOpen] = useState(false)
 
   const vaultsList = vaults || []
 
@@ -73,18 +75,78 @@ function App() {
                 </div>
               </div>
 
-              <Button 
-                onClick={() => setCreateDialogOpen(true)}
-                className="bg-accent text-accent-foreground hover:bg-accent/90 gap-2"
-              >
-                <Plus size={20} weight="bold" />
-                Create Vault
-              </Button>
+              <div className="flex items-center gap-3">
+                <motion.div
+                  animate={{ 
+                    boxShadow: [
+                      "0 0 0 0 rgba(69, 133, 162, 0)",
+                      "0 0 0 8px rgba(69, 133, 162, 0)",
+                    ]
+                  }}
+                  transition={{ 
+                    repeat: Infinity, 
+                    duration: 2,
+                    ease: "easeInOut"
+                  }}
+                  className="relative"
+                >
+                  <Button 
+                    onClick={() => setAlphaBotOpen(true)}
+                    variant="outline"
+                    className="border-primary/30 hover:bg-primary/10 gap-2 relative overflow-hidden group"
+                  >
+                    <motion.div
+                      animate={{ rotate: [0, 10, -10, 0] }}
+                      transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+                    >
+                      <Robot size={20} weight="duotone" />
+                    </motion.div>
+                    <span className="hidden sm:inline">Ask Alpha Bot</span>
+                    <span className="sm:hidden">Alpha Bot</span>
+                  </Button>
+                </motion.div>
+                <Button 
+                  onClick={() => setCreateDialogOpen(true)}
+                  className="bg-accent text-accent-foreground hover:bg-accent/90 gap-2"
+                >
+                  <Plus size={20} weight="bold" />
+                  <span className="hidden sm:inline">Create Vault</span>
+                  <span className="sm:hidden">Create</span>
+                </Button>
+              </div>
             </div>
           </div>
         </header>
 
         <main className="container mx-auto px-6 py-8">
+          {vaultsList.length === 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-6 p-4 rounded-xl bg-gradient-to-r from-primary/10 via-accent/10 to-primary/10 border border-primary/20"
+            >
+              <div className="flex items-start gap-3">
+                <div className="p-2 bg-gradient-to-br from-primary to-accent rounded-lg flex-shrink-0">
+                  <Robot className="text-primary-foreground" size={24} weight="duotone" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-sm mb-1">Meet Alpha Bot - Your AI Strategy Assistant</h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Get personalized vault recommendations, market insights, and optimization strategies powered by AI. Ask about the best strategies, risk analysis, or how to maximize your yields.
+                  </p>
+                  <Button
+                    onClick={() => setAlphaBotOpen(true)}
+                    size="sm"
+                    variant="outline"
+                    className="mt-3 border-primary/30 hover:bg-primary/10"
+                  >
+                    Try Alpha Bot
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -146,15 +208,25 @@ function App() {
               <VaultIcon className="mx-auto text-muted-foreground mb-4" size={64} weight="duotone" />
               <h3 className="text-xl font-semibold mb-2">No vaults yet</h3>
               <p className="text-muted-foreground mb-6">
-                Create your first vault to start generating yield
+                Create your first vault to start generating yield, or ask Alpha Bot for recommendations
               </p>
-              <Button 
-                onClick={() => setCreateDialogOpen(true)}
-                className="bg-accent text-accent-foreground hover:bg-accent/90 gap-2"
-              >
-                <Plus size={20} weight="bold" />
-                Create Your First Vault
-              </Button>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Button 
+                  onClick={() => setCreateDialogOpen(true)}
+                  className="bg-accent text-accent-foreground hover:bg-accent/90 gap-2"
+                >
+                  <Plus size={20} weight="bold" />
+                  Create Your First Vault
+                </Button>
+                <Button 
+                  onClick={() => setAlphaBotOpen(true)}
+                  variant="outline"
+                  className="border-primary/30 hover:bg-primary/10 gap-2"
+                >
+                  <Robot size={20} weight="duotone" />
+                  Get AI Recommendations
+                </Button>
+              </div>
             </motion.div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -174,12 +246,33 @@ function App() {
             </div>
           )}
         </main>
+
+        <motion.div
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: 0.5, type: "spring" }}
+          className="fixed bottom-6 right-6 md:hidden z-40"
+        >
+          <Button
+            onClick={() => setAlphaBotOpen(true)}
+            size="lg"
+            className="w-14 h-14 rounded-full shadow-2xl bg-gradient-to-br from-primary to-accent hover:scale-110 transition-transform"
+          >
+            <Robot size={28} weight="duotone" className="text-primary-foreground" />
+          </Button>
+        </motion.div>
       </div>
 
       <CreateVaultDialog
         open={createDialogOpen}
         onOpenChange={setCreateDialogOpen}
         onVaultCreate={handleVaultCreate}
+      />
+
+      <AlphaBot
+        isOpen={alphaBotOpen}
+        onClose={() => setAlphaBotOpen(false)}
+        vaults={vaultsList}
       />
 
       <Toaster />
