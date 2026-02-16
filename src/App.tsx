@@ -5,6 +5,7 @@ import { Plus, Vault as VaultIcon, ChartLine, Wallet, Robot } from '@phosphor-ic
 import { VaultCard } from '@/components/VaultCard'
 import { CreateVaultDialog } from '@/components/CreateVaultDialog'
 import { AlphaBot } from '@/components/AlphaBot'
+import { IPORInfo } from '@/components/IPORInfo'
 import { VaultConfig, Vault } from '@/lib/types'
 import { calculateVaultRisk, calculateExpectedAPY } from '@/lib/strategies'
 import { Toaster } from '@/components/ui/sonner'
@@ -76,6 +77,7 @@ function App() {
               </div>
 
               <div className="flex items-center gap-3">
+                <IPORInfo />
                 <motion.div
                   animate={{ 
                     boxShadow: [
@@ -130,9 +132,9 @@ function App() {
                   <Robot className="text-primary-foreground" size={24} weight="duotone" />
                 </div>
                 <div className="flex-1">
-                  <h3 className="font-semibold text-sm mb-1">Meet Alpha Bot - Your AI Strategy Assistant</h3>
+                  <h3 className="font-semibold text-sm mb-1">Meet Alpha Bot - Your IPOR Strategy Expert</h3>
                   <p className="text-xs text-muted-foreground leading-relaxed">
-                    Get personalized vault recommendations, market insights, and optimization strategies powered by AI. Ask about the best strategies, risk analysis, or how to maximize your yields.
+                    Get AI-powered recommendations for IPOR interest rate swaps, optimal vault configurations, and multi-strategy yield optimization. Ask about rate hedging, risk analysis, or the best DeFi protocols to combine.
                   </p>
                   <Button
                     onClick={() => setAlphaBotOpen(true)}
@@ -208,7 +210,7 @@ function App() {
               <VaultIcon className="mx-auto text-muted-foreground mb-4" size={64} weight="duotone" />
               <h3 className="text-xl font-semibold mb-2">No vaults yet</h3>
               <p className="text-muted-foreground mb-6">
-                Create your first vault to start generating yield, or ask Alpha Bot for recommendations
+                Create your first IPOR Fusion vault to start generating yield with advanced strategies, or ask Alpha Bot for personalized recommendations
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Button 
@@ -246,6 +248,48 @@ function App() {
             </div>
           )}
         </main>
+
+        <footer className="border-t border-border bg-card/30 backdrop-blur-sm mt-12">
+          <div className="container mx-auto px-6 py-6">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 bg-primary/20 rounded">
+                  <VaultIcon className="text-primary" size={20} weight="duotone" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold">IPOR Fusion</p>
+                  <p className="text-xs text-muted-foreground">Advanced DeFi Vault Platform</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                <a 
+                  href="https://docs.ipor.io" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="hover:text-primary transition-colors"
+                >
+                  Documentation
+                </a>
+                <a 
+                  href="https://github.com/IPOR-Labs/ipor-fusion" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="hover:text-primary transition-colors"
+                >
+                  GitHub
+                </a>
+                <a 
+                  href="https://app.ipor.io" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="hover:text-primary transition-colors"
+                >
+                  IPOR App
+                </a>
+              </div>
+            </div>
+          </div>
+        </footer>
 
         <motion.div
           initial={{ scale: 0, opacity: 0 }}

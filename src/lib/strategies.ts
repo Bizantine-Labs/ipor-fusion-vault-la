@@ -2,6 +2,36 @@ import { Strategy } from './types'
 
 export const AVAILABLE_STRATEGIES: Strategy[] = [
   {
+    id: 'ipor-usdc-pay-fixed',
+    name: 'IPOR Pay Fixed USDC',
+    protocol: 'IPOR',
+    type: 'derivatives',
+    estimatedAPY: 5.4,
+    riskScore: 3,
+    description: 'Pay fixed rate, receive floating rate on USDC interest rate swaps',
+    icon: 'derivatives'
+  },
+  {
+    id: 'ipor-usdt-receive-fixed',
+    name: 'IPOR Receive Fixed USDT',
+    protocol: 'IPOR',
+    type: 'derivatives',
+    estimatedAPY: 6.2,
+    riskScore: 3,
+    description: 'Receive fixed rate, pay floating rate on USDT interest rate swaps',
+    icon: 'derivatives'
+  },
+  {
+    id: 'ipor-dai-swap',
+    name: 'IPOR DAI Rate Swap',
+    protocol: 'IPOR',
+    type: 'derivatives',
+    estimatedAPY: 5.8,
+    riskScore: 3,
+    description: 'Interest rate swap strategy on DAI with dynamic rate optimization',
+    icon: 'derivatives'
+  },
+  {
     id: 'aave-usdc',
     name: 'Aave USDC Lending',
     protocol: 'Aave',
@@ -12,13 +42,23 @@ export const AVAILABLE_STRATEGIES: Strategy[] = [
     icon: 'lending'
   },
   {
-    id: 'compound-eth',
-    name: 'Compound ETH',
+    id: 'compound-usdc',
+    name: 'Compound USDC',
     protocol: 'Compound',
     type: 'lending',
-    estimatedAPY: 2.8,
+    estimatedAPY: 2.9,
     riskScore: 2,
-    description: 'Supply ETH to Compound for steady yields',
+    description: 'Supply USDC to Compound for steady yields',
+    icon: 'lending'
+  },
+  {
+    id: 'morpho-aave-usdc',
+    name: 'Morpho-Aave USDC',
+    protocol: 'Morpho',
+    type: 'lending',
+    estimatedAPY: 4.1,
+    riskScore: 2,
+    description: 'Enhanced Aave lending with P2P matching for better rates',
     icon: 'lending'
   },
   {
@@ -42,13 +82,13 @@ export const AVAILABLE_STRATEGIES: Strategy[] = [
     icon: 'liquidity'
   },
   {
-    id: 'gmx-glp',
-    name: 'GMX GLP',
-    protocol: 'GMX',
+    id: 'balancer-weighted',
+    name: 'Balancer Weighted Pool',
+    protocol: 'Balancer',
     type: 'liquidity',
-    estimatedAPY: 18.3,
-    riskScore: 5,
-    description: 'High-yield liquidity provision with exposure to perpetual trading fees',
+    estimatedAPY: 8.3,
+    riskScore: 3,
+    description: 'Customizable weighted liquidity pool with trading fees',
     icon: 'liquidity'
   },
   {
@@ -62,13 +102,13 @@ export const AVAILABLE_STRATEGIES: Strategy[] = [
     icon: 'derivatives'
   },
   {
-    id: 'ribbon-eth-covered-call',
-    name: 'Ribbon ETH Covered Call',
-    protocol: 'Ribbon',
+    id: 'gearbox-leverage',
+    name: 'Gearbox Leverage Farming',
+    protocol: 'Gearbox',
     type: 'derivatives',
-    estimatedAPY: 15.2,
+    estimatedAPY: 16.7,
     riskScore: 5,
-    description: 'Automated options strategy selling covered calls on ETH',
+    description: 'Leveraged yield farming with managed risk parameters',
     icon: 'derivatives'
   },
   {
@@ -89,6 +129,16 @@ export const AVAILABLE_STRATEGIES: Strategy[] = [
     estimatedAPY: 3.5,
     riskScore: 2,
     description: 'Decentralized ETH staking with validator diversity',
+    icon: 'staking'
+  },
+  {
+    id: 'frax-sfrxeth',
+    name: 'Frax sfrxETH',
+    protocol: 'Frax',
+    type: 'staking',
+    estimatedAPY: 4.2,
+    riskScore: 3,
+    description: 'Staked Frax ETH with competitive validator yields',
     icon: 'staking'
   }
 ]

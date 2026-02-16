@@ -7,12 +7,13 @@ import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Badge } from '@/components/ui/badge'
 import { StrategyCard } from './StrategyCard'
 import { AllocationSlider } from './AllocationSlider'
 import { RiskGauge } from './RiskGauge'
 import { AVAILABLE_STRATEGIES, ASSET_OPTIONS, calculateVaultRisk, calculateExpectedAPY } from '@/lib/strategies'
 import { VaultConfig } from '@/lib/types'
-import { CheckCircle, Warning } from '@phosphor-icons/react'
+import { CheckCircle, Warning, Funnel } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import { motion } from 'framer-motion'
 
@@ -33,6 +34,7 @@ export function CreateVaultDialog({ open, onOpenChange, onVaultCreate }: CreateV
     isPublic: true,
     strategies: []
   })
+  const [strategyFilter, setStrategyFilter] = useState<string>('all')
 
   const [selectedStrategies, setSelectedStrategies] = useState<Set<string>>(new Set())
 
@@ -75,6 +77,12 @@ export function CreateVaultDialog({ open, onOpenChange, onVaultCreate }: CreateV
   const riskScore = calculateVaultRisk(config.strategies || [])
   const expectedAPY = calculateExpectedAPY(config.strategies || [])
 
+  const filteredStrategies = AVAILABLE_STRATEGIES.filter(strategy => {
+    if (strategyFilter === 'all') return true
+    if (strategyFilter === 'ipor') return strategy.protocol === 'IPOR'
+    return strategy.type === strategyFilter
+  })
+
   const canProceedToStrategies = config.name && config.description && config.asset
   const canProceedToReview = canProceedToStrategies && 
     config.strategies && 
@@ -101,6 +109,7 @@ export function CreateVaultDialog({ open, onOpenChange, onVaultCreate }: CreateV
       strategies: []
     })
     setSelectedStrategies(new Set())
+    setStrategyFilter('all')
     setActiveTab('basic')
   }
 
@@ -219,15 +228,34 @@ export function CreateVaultDialog({ open, onOpenChange, onVaultCreate }: CreateV
           <TabsContent value="strategies" className="space-y-6 mt-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2 space-y-4">
-                <div>
-                  <h3 className="text-lg font-semibold mb-2">Available Strategies</h3>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Select strategies to include in your vault
-                  </p>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2">Available Strategies</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Select strategies to include in your vault
+                    </p>
+                  </div>
+                  <Select value={strategyFilter} onValueChange={setStrategyFilter}>
+                    <SelectTrigger className="w-[180px]">
+                      <Funnel size={16} className="mr-2" />
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Strategies</SelectItem>
+                      <SelectItem value="ipor">
+                        <Badge variant="outline" className="mr-2">IPOR</Badge>
+                        IPOR Only
+                      </SelectItem>
+                      <SelectItem value="lending">Lending</SelectItem>
+                      <SelectItem value="liquidity">Liquidity</SelectItem>
+                      <SelectItem value="derivatives">Derivatives</SelectItem>
+                      <SelectItem value="staking">Staking</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 
                 <div className="grid grid-cols-1 gap-3">
-                  {AVAILABLE_STRATEGIES.map(strategy => (
+                  {filteredStrategies.map(strategy => (
                     <StrategyCard
                       key={strategy.id}
                       strategy={strategy}

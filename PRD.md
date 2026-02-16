@@ -1,15 +1,15 @@
 # Planning Guide
 
-A DeFi vault launching platform that enables users to create and configure IPOR Fusion vaults with customizable parameters, strategies, and yield opportunities for optimal capital deployment.
+A DeFi vault launching platform built on IPOR Fusion that enables users to create and configure sophisticated vaults combining interest rate derivatives with multi-protocol yield strategies for optimized capital deployment and rate hedging.
 
 **Experience Qualities**:
 1. **Professional** - Enterprise-grade interface that instills confidence in users managing significant capital with clear information hierarchy and robust validation
-2. **Transparent** - All vault parameters, risks, and configurations are clearly visible with real-time feedback on selections and their implications
-3. **Efficient** - Streamlined vault creation workflow that guides users from strategy selection through deployment without unnecessary friction
+2. **Transparent** - All vault parameters, risks, IPOR swap positions, and configurations are clearly visible with real-time feedback on selections and their implications
+3. **Efficient** - Streamlined vault creation workflow that guides users from strategy selection through deployment without unnecessary friction, with AI-powered optimization
 
 **Complexity Level**: Complex Application (advanced functionality, likely with multiple views)
 
-This requires multiple interconnected views for vault configuration, strategy selection, parameter setting, risk assessment, and deployment confirmation. The app handles complex DeFi concepts, real-time validation, and multi-step workflows that need sophisticated state management.
+This requires multiple interconnected views for vault configuration, strategy selection (including IPOR interest rate derivatives), parameter setting, risk assessment, and deployment confirmation. The app handles complex DeFi concepts, real-time validation, multi-strategy fusion vaults, and multi-step workflows that need sophisticated state management.
 
 ## Essential Features
 
@@ -21,11 +21,11 @@ This requires multiple interconnected views for vault configuration, strategy se
 - **Success criteria**: All required fields validated, gas estimation provided, successful transaction submission with confirmation
 
 ### Strategy Selection & Allocation
-- **Functionality**: Interface for selecting yield strategies (lending, liquidity provision, derivatives) and setting capital allocation percentages across strategies
-- **Purpose**: Enables diversification and optimization of yield sources within a single vault
+- **Functionality**: Interface for selecting yield strategies including IPOR interest rate swaps (pay fixed/receive fixed), lending protocols, liquidity provision, derivatives, and staking, with capital allocation percentages across strategies
+- **Purpose**: Enables diversification and optimization of yield sources within a single vault, with IPOR derivatives for rate hedging
 - **Trigger**: Reached during vault configuration workflow
-- **Progression**: View available strategies with APY estimates → Select strategies from marketplace → Set allocation percentages with visual slider → Validate allocations sum to 100% → Configure strategy-specific parameters → Confirm selections
-- **Success criteria**: At least one strategy selected, allocations total 100%, strategy parameters validated, risk profile displayed
+- **Progression**: View available strategies including IPOR swaps with rate estimates → Select strategies from marketplace → Set allocation percentages with visual slider → Validate allocations sum to 100% → Configure strategy-specific parameters → Confirm selections
+- **Success criteria**: At least one strategy selected, allocations total 100%, strategy parameters validated, risk profile displayed, IPOR swap positions clearly explained
 
 ### Risk Assessment Dashboard
 - **Functionality**: Real-time calculation and visualization of vault risk metrics based on selected strategies and parameters
@@ -49,11 +49,18 @@ This requires multiple interconnected views for vault configuration, strategy se
 - **Success criteria**: All transactions displayed accurately, filters work correctly, export generates valid CSV/JSON
 
 ### Alpha Bot - AI Strategy Assistant
-- **Functionality**: AI-powered chatbot that analyzes market conditions, vault performance, and user goals to provide personalized strategy recommendations and optimization insights
-- **Purpose**: Empowers users with intelligent guidance for vault creation and optimization, making complex DeFi strategies accessible
+- **Functionality**: AI-powered chatbot specializing in IPOR protocols that analyzes market conditions, interest rate trends, vault performance, and user goals to provide personalized strategy recommendations including optimal IPOR swap positions and optimization insights
+- **Purpose**: Empowers users with intelligent guidance for vault creation and optimization, making complex DeFi strategies and interest rate derivatives accessible
 - **Trigger**: User clicks "Ask Alpha Bot" button in header or opens chat panel
-- **Progression**: User asks question about strategies/markets → Bot analyzes current vaults and market data → Generates personalized recommendations with rationale → User can follow up with clarifying questions → Bot provides actionable insights with specific strategy allocations
-- **Success criteria**: Bot responds within 3 seconds, provides relevant strategy recommendations, suggests optimal allocations, explains risk/reward tradeoffs clearly
+- **Progression**: User asks question about IPOR swaps/strategies/markets → Bot analyzes current vaults, interest rate environment, and market data → Generates personalized recommendations with rationale including IPOR derivative positions → User can follow up with clarifying questions → Bot provides actionable insights with specific strategy allocations and rate hedging advice
+- **Success criteria**: Bot responds within 3 seconds, provides relevant IPOR-focused strategy recommendations, suggests optimal allocations including swap positions, explains risk/reward tradeoffs and rate exposure clearly
+
+### IPOR Protocol Education
+- **Functionality**: Comprehensive information dialog explaining IPOR Fusion, interest rate swaps, available strategies, benefits, and risks
+- **Purpose**: Educates users about IPOR's unique capabilities and helps them understand interest rate derivatives before creating vaults
+- **Trigger**: User clicks "About IPOR Fusion" button in header
+- **Progression**: Open dialog → Browse tabs (Overview, Strategies, Benefits, Risks) → Read detailed explanations → Access external documentation link
+- **Success criteria**: Clear explanation of IPOR concepts, strategy types well-documented, risk disclosures comprehensive, external docs easily accessible
 
 ## Edge Case Handling
 

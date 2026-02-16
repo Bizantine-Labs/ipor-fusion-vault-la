@@ -29,13 +29,13 @@ export function AlphaBot({ isOpen, onClose, vaults }: AlphaBotProps) {
     {
       id: 'welcome',
       role: 'assistant',
-      content: "👋 Hey! I'm Alpha Bot, your AI strategy assistant. I analyze market conditions and your vaults to help you maximize yield. What would you like to know?",
+      content: "👋 Hey! I'm Alpha Bot, your AI assistant for IPOR Fusion vaults. I specialize in interest rate derivatives and multi-strategy yield optimization. Ask me about IPOR swaps, rate hedging, or how to maximize your DeFi returns!",
       timestamp: Date.now(),
       suggestions: [
-        "What's the best strategy right now?",
-        "Analyze my current vaults",
-        "Suggest a low-risk portfolio",
-        "High yield opportunities?"
+        "What are IPOR interest rate swaps?",
+        "Best strategies for stable yields?",
+        "How to hedge rate volatility?",
+        "Compare lending vs derivatives"
       ]
     }
   ])
@@ -72,7 +72,13 @@ export function AlphaBot({ isOpen, onClose, vaults }: AlphaBotProps) {
     setIsTyping(true)
 
     try {
-      const contextInfo = `You are Alpha Bot, an expert DeFi strategy advisor for IPOR Fusion vaults. 
+      const contextInfo = `You are Alpha Bot, an expert DeFi strategy advisor specializing in IPOR Fusion vaults and interest rate derivatives. 
+
+IPOR Protocol Overview:
+- IPOR (Interest Rate Oracle Protocol) provides decentralized interest rate derivatives
+- Fusion vaults enable advanced yield strategies combining multiple DeFi protocols
+- IPOR offers interest rate swaps where users can pay fixed/receive floating or vice versa
+- Key focus: stablecoins (USDC, USDT, DAI) with interest rate optimization
 
 Context:
 - User has ${vaults.length} active vaults
@@ -82,12 +88,12 @@ ${vaults.length > 0 ? `- Current vaults: ${vaults.map(v => `${v.name} (${v.asset
 User question: ${textToSend}
 
 Provide a concise, actionable response (2-3 paragraphs max). Include:
-1. Direct answer to their question
+1. Direct answer to their question with IPOR-specific insights where relevant
 2. Specific strategy recommendations with protocols and expected APYs
-3. Risk considerations
-4. Action items
+3. Risk considerations and how IPOR derivatives can hedge risks
+4. Action items or suggested vault configurations
 
-Be conversational, confident, and use emojis sparingly. Focus on practical DeFi advice.`
+Be conversational, confident, and use emojis sparingly. Emphasize IPOR's unique value proposition for interest rate management when appropriate.`
       
       const prompt = window.spark.llmPrompt([contextInfo] as any)
       const response = await window.spark.llm(prompt, 'gpt-4o-mini')
@@ -117,22 +123,28 @@ Be conversational, confident, and use emojis sparingly. Focus on practical DeFi 
   const generateSuggestions = (question: string, vaults: Vault[]): string[] => {
     const lowerQ = question.toLowerCase()
     
-    if (lowerQ.includes('risk') || lowerQ.includes('safe')) {
+    if (lowerQ.includes('ipor') || lowerQ.includes('swap') || lowerQ.includes('rate')) {
+      return ["How do IPOR swaps work?", "Best rate hedging strategy?", "Pay fixed vs receive fixed?"]
+    }
+    if (lowerQ.includes('risk') || lowerQ.includes('safe') || lowerQ.includes('stable')) {
       return ["Show me stable strategies", "What about staking options?", "Diversification tips?"]
     }
     if (lowerQ.includes('high') || lowerQ.includes('yield') || lowerQ.includes('apy')) {
       return ["What are the risks?", "Compare liquidity vs lending", "Best performing protocols?"]
     }
-    if (lowerQ.includes('analyze') || lowerQ.includes('vault')) {
-      return ["How can I optimize?", "Rebalancing strategies?", "Add more strategies?"]
+    if (lowerQ.includes('analyze') || lowerQ.includes('vault') || lowerQ.includes('portfolio')) {
+      return ["How can I optimize?", "Rebalancing strategies?", "Add IPOR derivatives?"]
     }
-    if (lowerQ.includes('strategy') || lowerQ.includes('best')) {
+    if (lowerQ.includes('strategy') || lowerQ.includes('best') || lowerQ.includes('recommend')) {
       return ["Explain this strategy", "Risk assessment?", "Alternative options?"]
+    }
+    if (lowerQ.includes('hedge') || lowerQ.includes('protect') || lowerQ.includes('volatility')) {
+      return ["Interest rate swaps?", "Diversification approach?", "Risk mitigation?"]
     }
     
     return [
       "Optimize existing vaults",
-      "Market trends analysis",
+      "Best IPOR swap position?",
       "Risk vs reward breakdown"
     ]
   }
