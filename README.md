@@ -17,6 +17,8 @@ A sophisticated DeFi vault management platform built on IPOR Fusion that enables
 - **Multi-Strategy Vaults**: Combine multiple protocols (Aave, Compound, Uniswap, Curve, etc.) in one vault
 - **Risk Analysis**: Real-time risk scoring and APY calculation based on strategy allocations
 - **Performance Tracking**: Monitor vault TVL, APY, and 24-hour performance metrics
+- **Python SDK**: Programmatic vault management with add/remove strategies and rebalancing
+- **Analytics Dashboard**: Track positions, transaction history, and vault metrics
 - **Persistent Storage**: All vault configurations saved using Spark KV store
 
 ## 🎨 Design Highlights
@@ -83,6 +85,15 @@ AI assistant that provides personalized strategy recommendations based on:
 - Market conditions and risk tolerance
 - Python SDK usage for programmatic access
 
+### Python SDK Integration
+The Developer Tools panel showcases comprehensive Python SDK examples:
+- **Installation & Setup**: Quick start with pip install and SDK initialization
+- **Vault Creation**: Deploy vaults programmatically with multiple strategies
+- **Strategy Management**: Add/remove strategies, rebalance allocations dynamically
+- **IPOR Swaps**: Configure pay-fixed and receive-fixed interest rate swaps
+- **Monitoring & Analytics**: Track vault performance, positions, and transaction history
+- **Advanced Features**: Auto-rebalancing, multi-strategy optimization, custom parameters
+
 ### Vault Creation Flow
 1. **Basic Configuration**: Name, description, asset type, fees
 2. **Strategy Selection**: Choose from lending, liquidity, derivatives, staking
@@ -97,10 +108,50 @@ AI assistant that provides personalized strategy recommendations based on:
 
 ## 📚 Resources
 
+### Documentation & Guides
 - [IPOR Documentation](https://docs.ipor.io)
 - [IPOR Fusion Guide](https://docs.ipor.io/build-on-fusion/)
 - [Python SDK GitHub](https://github.com/IPOR-Labs/ipor-fusion.py)
 - [Developer Guide](https://docs.ipor.io/build-on-fusion/developer-guide/)
+
+### Python SDK Quick Start
+
+Install the IPOR Fusion SDK:
+```bash
+pip install ipor-fusion
+```
+
+Create and manage vaults programmatically:
+```python
+from ipor_fusion import IporFusionSDK
+from ipor_fusion.strategies import AaveV3Strategy, IPORSwapStrategy
+
+sdk = IporFusionSDK(network="mainnet")
+
+# Create a multi-strategy vault
+vault = sdk.create_vault({
+    "name": "My DeFi Vault",
+    "asset": "USDC",
+    "strategies": [
+        AaveV3Strategy(allocation=0.6),
+        IPORSwapStrategy(allocation=0.4, swap_type="pay_fixed", notional=100000)
+    ]
+})
+
+# Add strategies and rebalance
+vault.add_strategy(IPORSwapStrategy(allocation=0.3, swap_type="receive_fixed", notional=50000))
+vault.rebalance()
+
+# Monitor performance and analytics
+metrics = vault.get_metrics()
+print(f"TVL: ${metrics.tvl:,.2f} | APY: {metrics.apy}% | Risk: {metrics.risk_score}/5")
+
+# Track positions and transactions
+positions = vault.get_positions()
+transactions = vault.get_transaction_history(limit=10)
+```
+
+See the **Developer Tools** panel in the app for comprehensive examples including IPOR swaps, monitoring & analytics, and advanced multi-strategy configurations.
 
 ## 📄 License
 
