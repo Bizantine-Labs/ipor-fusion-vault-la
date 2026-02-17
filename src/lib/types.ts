@@ -31,6 +31,10 @@ export interface Vault extends VaultConfig {
   createdAt: number
   performance24h: number
   riskScore: number
+  deploymentStatus?: 'mock' | 'deploying' | 'deployed' | 'failed'
+  vaultAddress?: string
+  transactionHash?: string
+  network?: string
 }
 
 export interface Transaction {

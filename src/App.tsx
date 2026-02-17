@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Plus, Vault as VaultIcon, ChartLine, Wallet, Robot } from '@phosphor-icons/react'
 import { VaultCard } from '@/components/VaultCard'
 import { CreateVaultDialog } from '@/components/CreateVaultDialog'
+import { DeployVaultDialog } from '@/components/DeployVaultDialog'
 import { AlphaBot } from '@/components/AlphaBot'
 import { IPORInfo } from '@/components/IPORInfo'
 import { DeveloperTools } from '@/components/DeveloperTools'
@@ -16,6 +17,7 @@ function App() {
   const [vaults, setVaults] = useKV<Vault[]>('ipor-vaults', [])
   const [createDialogOpen, setCreateDialogOpen] = useState(false)
   const [selectedVault, setSelectedVault] = useState<Vault | null>(null)
+  const [deployVault, setDeployVault] = useState<Vault | null>(null)
   const [alphaBotOpen, setAlphaBotOpen] = useState(false)
 
   const vaultsList = vaults || []
@@ -28,10 +30,22 @@ function App() {
       apy: calculateExpectedAPY(config.strategies),
       createdAt: Date.now(),
       performance24h: (Math.random() - 0.5) * 5,
-      riskScore: calculateVaultRisk(config.strategies)
+      riskScore: calculateVaultRisk(config.strategies),
+      deploymentStatus: 'mock'
     }
 
     setVaults((currentVaults) => [...(currentVaults || []), newVault])
+  }
+
+  const handleDeploySuccess = (vaultId: string, vaultAddress: string, txHash: string, network: string) => {
+    setVaults((currentVaults) => 
+      (currentVaults || []).map(v => 
+        v.id === vaultId 
+          ? { ...v, deploymentStatus: 'deployed' as const, vaultAddress, transactionHash: txHash, network }
+          : v
+      )
+    )
+    setDeployVault(null)
   }
 
   const totalTVL = vaultsList.reduce((sum, v) => sum + v.tvl, 0)
@@ -244,6 +258,7 @@ function App() {
                   <VaultCard 
                     vault={vault} 
                     onClick={() => setSelectedVault(vault)}
+                    onDeploy={vault.deploymentStatus === 'mock' ? () => setDeployVault(vault) : undefined}
                   />
                 </motion.div>
               ))}
@@ -314,6 +329,17 @@ function App() {
         onOpenChange={setCreateDialogOpen}
         onVaultCreate={handleVaultCreate}
       />
+
+      {deployVault && (
+        <DeployVaultDialog
+          open={!!deployVault}
+          onOpenChange={(open) => !open && setDeployVault(null)}
+          vault={deployVault}
+          onDeploySuccess={(vaultAddress, txHash, network) => 
+            handleDeploySuccess(deployVault.id, vaultAddress, txHash, network)
+          }
+        />
+      )}
 
       <AlphaBot
         isOpen={alphaBotOpen}
