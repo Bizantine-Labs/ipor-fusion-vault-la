@@ -149,7 +149,9 @@ export const ASSET_OPTIONS = [
   { value: 'DAI', label: 'DAI' },
   { value: 'ETH', label: 'ETH' },
   { value: 'WETH', label: 'WETH' },
-  { value: 'WBTC', label: 'WBTC' }
+  { value: 'WBTC', label: 'WBTC' },
+  { value: 'FRXP', label: 'FRXP (Wrapped XRP)' },
+  { value: 'XRP', label: 'XRP' }
 ]
 
 export function calculateVaultRisk(strategies: { strategyId: string; allocation: number }[]): number {

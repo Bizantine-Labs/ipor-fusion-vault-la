@@ -3,6 +3,7 @@ import { Badge } from '@/components/ui/badge'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Strategy } from '@/lib/types'
 import { TrendUp, ShieldCheck, Lightning } from '@phosphor-icons/react'
+import { getProtocolIcon } from '@/components/StrategyIcons'
 
 interface StrategyCardProps {
   strategy: Strategy
@@ -16,6 +17,8 @@ export function StrategyCard({ strategy, selected, onToggle }: StrategyCardProps
     if (score <= 4) return 'text-yellow-500 border-yellow-500/50'
     return 'text-destructive border-destructive/50'
   }
+
+  const ProtocolIcon = getProtocolIcon(strategy.protocol)
 
   return (
     <Card 
@@ -34,6 +37,9 @@ export function StrategyCard({ strategy, selected, onToggle }: StrategyCardProps
               onCheckedChange={onToggle}
               onClick={(e) => e.stopPropagation()}
             />
+            <div className="flex-shrink-0">
+              <ProtocolIcon size={32} />
+            </div>
             <div className="flex-1">
               <CardTitle className="text-base">{strategy.name}</CardTitle>
               <CardDescription className="text-xs mt-1">

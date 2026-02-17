@@ -3,6 +3,7 @@ import { Badge } from '@/components/ui/badge'
 import { Vault, TrendUp, TrendDown } from '@phosphor-icons/react'
 import { Vault as VaultType } from '@/lib/types'
 import { motion } from 'framer-motion'
+import { getAssetIcon } from '@/components/AssetIcons'
 
 interface VaultCardProps {
   vault: VaultType
@@ -11,6 +12,7 @@ interface VaultCardProps {
 
 export function VaultCard({ vault, onClick }: VaultCardProps) {
   const isPositive = vault.performance24h >= 0
+  const AssetIcon = getAssetIcon(vault.asset)
 
   return (
     <motion.div
@@ -24,8 +26,8 @@ export function VaultCard({ vault, onClick }: VaultCardProps) {
         <CardHeader>
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-primary/20 rounded-lg">
-                <Vault className="text-primary" size={24} />
+              <div className="flex-shrink-0">
+                <AssetIcon size={40} />
               </div>
               <div>
                 <CardTitle className="text-lg">{vault.name}</CardTitle>
