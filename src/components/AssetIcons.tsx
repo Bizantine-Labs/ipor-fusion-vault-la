@@ -125,6 +125,68 @@ export function XRPIcon({ size = 32, className = "" }: IconProps) {
   )
 }
 
+export function FRAXIcon({ size = 32, className = "" }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <circle cx="16" cy="16" r="16" fill="#000000" />
+      <path d="M12 10H20V12H14V14H19V16H14V20H12V10Z" fill="white" />
+      <path d="M16 16L20 20L18 22L14 18V16H16Z" fill="white" opacity="0.7" />
+    </svg>
+  )
+}
+
+export function stETHIcon({ size = 32, className = "" }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <circle cx="16" cy="16" r="16" fill="url(#steth-gradient)" />
+      <path d="M16 6L15.5 7.68V19.87L16 20.37L22 16.58L16 6Z" fill="white" />
+      <path d="M16 6L10 16.58L16 20.37V6Z" fill="white" opacity="0.6" />
+      <path d="M16 21.6L15.7 21.98V26.02L16 26.95L22 17.84L16 21.6Z" fill="white" />
+      <path d="M16 26.95V21.6L10 17.84L16 26.95Z" fill="white" opacity="0.6" />
+      <circle cx="16" cy="16" r="13" stroke="#00A3FF" strokeWidth="1.5" fill="none" />
+      <defs>
+        <linearGradient id="steth-gradient" x1="0" y1="0" x2="32" y2="32">
+          <stop stopColor="#00A3FF" />
+          <stop offset="1" stopColor="#0081D5" />
+        </linearGradient>
+      </defs>
+    </svg>
+  )
+}
+
+export function FLRIcon({ size = 32, className = "" }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <circle cx="16" cy="16" r="16" fill="url(#flr-gradient)" />
+      <path d="M16 8L20 16L16 13L12 16L16 8Z" fill="white" />
+      <path d="M16 24L12 16L16 19L20 16L16 24Z" fill="white" opacity="0.7" />
+      <defs>
+        <linearGradient id="flr-gradient" x1="0" y1="0" x2="32" y2="32">
+          <stop stopColor="#E84142" />
+          <stop offset="1" stopColor="#C62828" />
+        </linearGradient>
+      </defs>
+    </svg>
+  )
+}
+
+export function SGBIcon({ size = 32, className = "" }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <circle cx="16" cy="16" r="16" fill="url(#sgb-gradient)" />
+      <path d="M16 8L20 16L16 13L12 16L16 8Z" fill="white" />
+      <path d="M16 24L12 16L16 19L20 16L16 24Z" fill="white" opacity="0.7" />
+      <circle cx="16" cy="16" r="11" stroke="white" strokeWidth="1" fill="none" opacity="0.3" />
+      <defs>
+        <linearGradient id="sgb-gradient" x1="0" y1="0" x2="32" y2="32">
+          <stop stopColor="#FFB74D" />
+          <stop offset="1" stopColor="#F57C00" />
+        </linearGradient>
+      </defs>
+    </svg>
+  )
+}
+
 export function DefaultAssetIcon({ size = 32, className = "" }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
@@ -148,11 +210,15 @@ export function getAssetIcon(asset: string) {
     USDC: USDCIcon,
     USDT: USDTIcon,
     DAI: DAIIcon,
+    FRAX: FRAXIcon,
     ETH: ETHIcon,
     WETH: WETHIcon,
+    STETH: stETHIcon,
     WBTC: WBTCIcon,
     FRXP: FRXPIcon,
     XRP: XRPIcon,
+    FLR: FLRIcon,
+    SGB: SGBIcon,
   }
   
   return iconMap[normalizedAsset] || DefaultAssetIcon

@@ -198,6 +198,74 @@ export function GearboxIcon({ size = 40, className = "" }: IconProps) {
   )
 }
 
+export function LagoonIcon({ size = 40, className = "" }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <rect width="40" height="40" rx="8" fill="url(#lagoon-gradient)" />
+      <path d="M12 22C12 22 16 18 20 18C24 18 28 22 28 22C28 26 24 28 20 28C16 28 12 26 12 22Z" fill="white" />
+      <path d="M12 16C12 16 16 12 20 12C24 12 28 16 28 16" stroke="white" strokeWidth="2" strokeLinecap="round" fill="none" opacity="0.5" />
+      <defs>
+        <linearGradient id="lagoon-gradient" x1="0" y1="0" x2="40" y2="40">
+          <stop stopColor="#0EA5E9" />
+          <stop offset="1" stopColor="#0284C7" />
+        </linearGradient>
+      </defs>
+    </svg>
+  )
+}
+
+export function FlareIcon({ size = 40, className = "" }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <rect width="40" height="40" rx="8" fill="url(#flare-icon-gradient)" />
+      <path d="M20 10L24 20L20 17L16 20L20 10Z" fill="white" />
+      <path d="M20 30L16 20L20 23L24 20L20 30Z" fill="white" opacity="0.7" />
+      <circle cx="20" cy="20" r="2" fill="white" />
+      <defs>
+        <linearGradient id="flare-icon-gradient" x1="0" y1="0" x2="40" y2="40">
+          <stop stopColor="#E84142" />
+          <stop offset="1" stopColor="#C62828" />
+        </linearGradient>
+      </defs>
+    </svg>
+  )
+}
+
+export function OptionsIcon({ size = 40, className = "" }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <rect width="40" height="40" rx="8" fill="url(#options-gradient)" />
+      <path d="M10 28L18 12L26 20L30 10" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+      <circle cx="18" cy="12" r="2" fill="white" />
+      <circle cx="26" cy="20" r="2" fill="white" />
+      <defs>
+        <linearGradient id="options-gradient" x1="0" y1="0" x2="40" y2="40">
+          <stop stopColor="#F59E0B" />
+          <stop offset="1" stopColor="#D97706" />
+        </linearGradient>
+      </defs>
+    </svg>
+  )
+}
+
+export function MultipleIcon({ size = 40, className = "" }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
+      <rect width="40" height="40" rx="8" fill="url(#multiple-gradient)" />
+      <rect x="10" y="10" width="8" height="8" rx="2" fill="white" />
+      <rect x="22" y="10" width="8" height="8" rx="2" fill="white" opacity="0.7" />
+      <rect x="10" y="22" width="8" height="8" rx="2" fill="white" opacity="0.7" />
+      <rect x="22" y="22" width="8" height="8" rx="2" fill="white" opacity="0.5" />
+      <defs>
+        <linearGradient id="multiple-gradient" x1="0" y1="0" x2="40" y2="40">
+          <stop stopColor="#8B5CF6" />
+          <stop offset="1" stopColor="#6D28D9" />
+        </linearGradient>
+      </defs>
+    </svg>
+  )
+}
+
 export function DefaultProtocolIcon({ size = 40, className = "" }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
@@ -230,6 +298,10 @@ export function getProtocolIcon(protocol: string) {
     rocketpool: RocketPoolIcon,
     frax: FraxIcon,
     gearbox: GearboxIcon,
+    lagoon: LagoonIcon,
+    flare: FlareIcon,
+    options: OptionsIcon,
+    multiple: MultipleIcon,
   }
   
   return iconMap[normalizedProtocol] || DefaultProtocolIcon

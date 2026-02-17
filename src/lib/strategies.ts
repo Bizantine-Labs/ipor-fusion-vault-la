@@ -140,6 +140,86 @@ export const AVAILABLE_STRATEGIES: Strategy[] = [
     riskScore: 3,
     description: 'Staked Frax ETH with competitive validator yields',
     icon: 'staking'
+  },
+  {
+    id: 'fxrp-lending-morpho',
+    name: 'FXRP Lending on Morpho',
+    protocol: 'Morpho',
+    type: 'lending',
+    estimatedAPY: 5.8,
+    riskScore: 3,
+    description: 'Lend FXRP on Morpho protocol for competitive yields',
+    icon: 'lending'
+  },
+  {
+    id: 'fxrp-usdc-lp',
+    name: 'FXRP/USDC Liquidity Pool',
+    protocol: 'Uniswap',
+    type: 'liquidity',
+    estimatedAPY: 8.4,
+    riskScore: 3,
+    description: 'Provide FXRP/USDC liquidity, earn fees and capture basis spreads',
+    icon: 'liquidity'
+  },
+  {
+    id: 'fxrp-xrp-basis',
+    name: 'FXRP/XRP Basis Strategy',
+    protocol: 'Multiple',
+    type: 'derivatives',
+    estimatedAPY: 7.2,
+    riskScore: 4,
+    description: 'Market-neutral strategy capturing FXRP vs XRP basis spread',
+    icon: 'derivatives'
+  },
+  {
+    id: 'ipor-fxrp-hedge',
+    name: 'IPOR FXRP Rate Hedge',
+    protocol: 'IPOR',
+    type: 'derivatives',
+    estimatedAPY: 6.5,
+    riskScore: 3,
+    description: 'Hedge FXRP rate exposure using IPOR interest rate swaps',
+    icon: 'derivatives'
+  },
+  {
+    id: 'flare-fassets-yield',
+    name: 'Flare FAssets Yield',
+    protocol: 'Flare',
+    type: 'staking',
+    estimatedAPY: 5.3,
+    riskScore: 3,
+    description: 'Earn yield through Flare FAssets system collateral provision',
+    icon: 'staking'
+  },
+  {
+    id: 'lagoon-omnivault',
+    name: 'Lagoon OmniVault Strategy',
+    protocol: 'Lagoon',
+    type: 'derivatives',
+    estimatedAPY: 9.1,
+    riskScore: 4,
+    description: 'Multi-strategy vault combining FXRP lending, LP, and basis trades',
+    icon: 'derivatives'
+  },
+  {
+    id: 'flare-ftso-delegation',
+    name: 'Flare FTSO Delegation',
+    protocol: 'Flare',
+    type: 'staking',
+    estimatedAPY: 4.5,
+    riskScore: 2,
+    description: 'Delegate FLR tokens to FTSO data providers for rewards',
+    icon: 'staking'
+  },
+  {
+    id: 'fxrp-tail-hedge',
+    name: 'FXRP Tail Risk Protection',
+    protocol: 'Options',
+    type: 'derivatives',
+    estimatedAPY: 3.2,
+    riskScore: 2,
+    description: 'Options-based protection against FXRP peg breaks and volatility spikes',
+    icon: 'derivatives'
   }
 ]
 
@@ -147,11 +227,15 @@ export const ASSET_OPTIONS = [
   { value: 'USDC', label: 'USDC' },
   { value: 'USDT', label: 'USDT' },
   { value: 'DAI', label: 'DAI' },
+  { value: 'FRAX', label: 'FRAX' },
   { value: 'ETH', label: 'ETH' },
   { value: 'WETH', label: 'WETH' },
+  { value: 'stETH', label: 'stETH' },
   { value: 'WBTC', label: 'WBTC' },
   { value: 'FRXP', label: 'FRXP (Wrapped XRP)' },
-  { value: 'XRP', label: 'XRP' }
+  { value: 'XRP', label: 'XRP' },
+  { value: 'FLR', label: 'FLR (Flare)' },
+  { value: 'SGB', label: 'SGB (Songbird)' }
 ]
 
 export function calculateVaultRisk(strategies: { strategyId: string; allocation: number }[]): number {
