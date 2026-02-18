@@ -75,6 +75,25 @@ This application is production-ready and can be deployed immediately. All featur
 ✅ IPOR protocol education and developer resources  
 ✅ Risk assessment and APY calculations  
 
+## ✅ Next Step: Deploy
+
+If you're asking "what's next?", deployment is the immediate next move:
+
+1. **Install dependencies and build locally**
+   ```bash
+   npm install
+   npm run build
+   ```
+2. **Run the app in production mode**
+   ```bash
+   npm run preview
+   ```
+3. **Follow the deployment walkthrough** in:
+   - `WEB3_DEPLOYMENT.md` for wallet-based on-chain deployment
+   - `DEPLOYMENT_GUIDE.md` for backend API + Python SDK integration
+
+For first-time deployment, start on **Sepolia** before mainnet.
+
 ## 🔧 Key Components
 
 ### Alpha Bot
