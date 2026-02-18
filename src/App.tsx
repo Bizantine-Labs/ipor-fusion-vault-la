@@ -8,6 +8,7 @@ import { DeployVaultDialog } from '@/components/DeployVaultDialog'
 import { AlphaBot } from '@/components/AlphaBot'
 import { IPORInfo } from '@/components/IPORInfo'
 import { DeveloperTools } from '@/components/DeveloperTools'
+import { WalletConnect } from '@/components/WalletConnect'
 import { VaultConfig, Vault } from '@/lib/types'
 import { calculateVaultRisk, calculateExpectedAPY } from '@/lib/strategies'
 import { Toaster } from '@/components/ui/sonner'
@@ -94,6 +95,7 @@ function App() {
               <div className="flex items-center gap-3">
                 <DeveloperTools />
                 <IPORInfo />
+                <WalletConnect />
                 <motion.div
                   animate={{ 
                     boxShadow: [

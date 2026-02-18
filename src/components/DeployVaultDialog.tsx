@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -7,7 +7,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Vault } from '@/lib/types'
-import { deployVault, estimateGasCost, getBlockExplorerUrl, DeploymentConfig } from '@/lib/deployment'
+import { 
+  checkWalletConnection, 
+  connectWallet, 
+  switchNetwork, 
+  deployVaultOnChain, 
+  estimateDeploymentGas,
+  getBlockExplorerUrl, 
+  shortenAddress,
+  type SupportedChain 
+} from '@/lib/web3'
 import { CheckCircle, Warning, Rocket, Wallet as WalletIcon, Link as LinkIcon, Spinner } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -20,9 +29,12 @@ interface DeployVaultDialogProps {
 }
 
 export function DeployVaultDialog({ open, onOpenChange, vault, onDeploySuccess }: DeployVaultDialogProps) {
-  const [network, setNetwork] = useState<'mainnet' | 'sepolia' | 'arbitrum' | 'polygon'>('sepolia')
+  const [network, setNetwork] = useState<SupportedChain>('sepolia')
   const [initialDeposit, setInitialDeposit] = useState('0')
   const [deploying, setDeploying] = useState(false)
+  const [walletConnected, setWalletConnected] = useState(false)
+  const [walletAddress, setWalletAddress] = useState<string>('')
+  const [connecting, setConnecting] = useState(false)
   const [deploymentResult, setDeploymentResult] = useState<{
     success: boolean
     vaultAddress?: string
@@ -31,42 +43,107 @@ export function DeployVaultDialog({ open, onOpenChange, vault, onDeploySuccess }
   } | null>(null)
   const [gasEstimate, setGasEstimate] = useState<{ gasLimit: string; estimatedCost: string } | null>(null)
 
+  useEffect(() => {
+    if (open) {
+      checkWalletConnection().then(info => {
+        if (info) {
+          setWalletConnected(true)
+          setWalletAddress(info.address)
+        } else {
+          setWalletConnected(false)
+        }
+      })
+    }
+  }, [open])
+
+  const handleConnectWallet = async () => {
+    setConnecting(true)
+    try {
+      const walletInfo = await connectWallet()
+      setWalletConnected(true)
+      setWalletAddress(walletInfo.address)
+      toast.success('Wallet connected', {
+        description: `Connected to ${shortenAddress(walletInfo.address)}`
+      })
+    } catch (error: any) {
+      toast.error('Connection failed', {
+        description: error.message || 'Failed to connect wallet'
+      })
+    } finally {
+      setConnecting(false)
+    }
+  }
+
   const handleEstimateGas = async () => {
-    const estimate = await estimateGasCost(vault)
-    setGasEstimate(estimate)
+    if (!walletConnected) {
+      toast.error('Please connect your wallet first')
+      return
+    }
+
+    try {
+      const estimate = await estimateDeploymentGas(vault, network)
+      setGasEstimate({
+        gasLimit: estimate.gasLimit.toLocaleString(),
+        estimatedCost: estimate.gasCostEth
+      })
+      toast.success('Gas estimation complete')
+    } catch (error: any) {
+      toast.error('Gas estimation failed', {
+        description: error.message || 'Failed to estimate gas'
+      })
+    }
   }
 
   const handleDeploy = async () => {
+    if (!walletConnected) {
+      toast.error('Please connect your wallet first')
+      return
+    }
+
     setDeploying(true)
     setDeploymentResult(null)
 
     try {
-      const config: DeploymentConfig = {
-        vault,
-        network,
-        initialDeposit: parseFloat(initialDeposit) || 0
+      const walletInfo = await checkWalletConnection()
+      if (!walletInfo) {
+        throw new Error('Wallet not connected')
       }
 
-      const result = await deployVault(config)
-      setDeploymentResult(result)
-
-      if (result.success && result.vaultAddress && result.transactionHash) {
-        toast.success('Vault deployed successfully!', {
-          description: `Address: ${result.vaultAddress.slice(0, 10)}...${result.vaultAddress.slice(-8)}`
-        })
-        onDeploySuccess(result.vaultAddress, result.transactionHash, network)
-      } else {
-        toast.error('Deployment failed', {
-          description: result.error || 'Unknown error occurred'
-        })
+      if (walletInfo.chainName !== network) {
+        toast.info(`Switching to ${network}...`)
+        await switchNetwork(network)
+        await new Promise(resolve => setTimeout(resolve, 1000))
       }
+
+      toast.info('Deploying vault to blockchain...', {
+        description: 'Please confirm the transaction in your wallet'
+      })
+
+      const result = await deployVaultOnChain(
+        vault, 
+        network, 
+        parseFloat(initialDeposit) || 0
+      )
+
+      setDeploymentResult({
+        success: true,
+        vaultAddress: result.vaultAddress,
+        transactionHash: result.transactionHash
+      })
+
+      toast.success('Vault deployed successfully!', {
+        description: `Address: ${shortenAddress(result.vaultAddress)}`
+      })
+      
+      onDeploySuccess(result.vaultAddress, result.transactionHash, network)
     } catch (error: any) {
+      const errorMessage = error.message || 'Deployment failed'
       setDeploymentResult({
         success: false,
-        error: error.message || 'Deployment failed'
+        error: errorMessage
       })
       toast.error('Deployment failed', {
-        description: error.message || 'Unknown error occurred'
+        description: errorMessage
       })
     } finally {
       setDeploying(false)
@@ -93,10 +170,38 @@ export function DeployVaultDialog({ open, onOpenChange, vault, onDeploySuccess }
         </DialogHeader>
 
         <div className="space-y-6 mt-4">
+          {!walletConnected && (
+            <Alert className="border-accent/30 bg-accent/5">
+              <WalletIcon size={20} className="text-accent" />
+              <AlertDescription className="flex items-center justify-between gap-4">
+                <span className="text-sm">
+                  Connect your Web3 wallet to deploy vaults on-chain
+                </span>
+                <Button 
+                  onClick={handleConnectWallet} 
+                  disabled={connecting}
+                  size="sm"
+                  className="bg-accent text-accent-foreground hover:bg-accent/90"
+                >
+                  {connecting ? 'Connecting...' : 'Connect Wallet'}
+                </Button>
+              </AlertDescription>
+            </Alert>
+          )}
+
+          {walletConnected && (
+            <Alert className="border-accent/30 bg-accent/5">
+              <CheckCircle size={20} className="text-accent" weight="fill" />
+              <AlertDescription className="text-sm">
+                <strong>Wallet Connected:</strong> {shortenAddress(walletAddress)}
+              </AlertDescription>
+            </Alert>
+          )}
+
           <Alert className="border-primary/30 bg-primary/5">
             <Warning size={20} className="text-primary" />
             <AlertDescription className="text-sm">
-              <strong>Demo Mode:</strong> This deployment simulates blockchain transactions. For production deployments, you'll need to integrate with the IPOR Fusion Python SDK backend.
+              <strong>Note:</strong> This will deploy a real smart contract to the blockchain. Make sure you have sufficient funds for gas fees. For testnets, use faucets to obtain test tokens.
             </AlertDescription>
           </Alert>
 
@@ -208,14 +313,14 @@ export function DeployVaultDialog({ open, onOpenChange, vault, onDeploySuccess }
                     variant="outline"
                     onClick={handleEstimateGas}
                     className="flex-1"
-                    disabled={deploying}
+                    disabled={deploying || !walletConnected}
                   >
                     Estimate Gas
                   </Button>
                   <Button
                     onClick={handleDeploy}
                     className="flex-1 bg-accent text-accent-foreground hover:bg-accent/90 gap-2"
-                    disabled={deploying}
+                    disabled={deploying || !walletConnected}
                   >
                     {deploying ? (
                       <>
@@ -288,7 +393,7 @@ export function DeployVaultDialog({ open, onOpenChange, vault, onDeploySuccess }
                               variant="outline"
                               size="sm"
                               onClick={() => {
-                                const url = getBlockExplorerUrl(network, deploymentResult.transactionHash!)
+                                const url = getBlockExplorerUrl(network, 'tx', deploymentResult.transactionHash!)
                                 window.open(url, '_blank')
                               }}
                             >
