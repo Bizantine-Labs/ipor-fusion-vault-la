@@ -92,6 +92,47 @@ This application is production-ready and can be deployed immediately. All featur
 ✅ IPOR protocol education and developer resources  
 ✅ Risk assessment and APY calculations  
 
+## ✅ Deployment Quickstart (Do This Next)
+
+If you want to go from local app to live vault deployment, follow this order:
+
+1. **Install + verify the app builds**
+   ```bash
+   npm install
+   npm run build
+   ```
+
+2. **Run the production preview locally**
+   ```bash
+   npm run preview
+   ```
+   Open the printed URL (usually `http://localhost:4173`) and verify the UI loads.
+
+3. **Connect a wallet (MetaMask recommended)**
+   - Use the **Connect Wallet** button in the app
+   - Confirm your address and network in the header
+
+4. **Configure real Fusion factory addresses before deploying**
+   - Open `src/lib/web3.ts`
+   - Replace each placeholder in `FACTORY_ADDRESSES` (`0x1234...`) with the real factory contract address for that chain
+   - Double-check addresses against the official IPOR/Fusion docs or your deployment source of truth
+
+5. **Deploy safely on Sepolia first**
+   - Switch to **Sepolia** in wallet/app
+   - Fund test ETH from a faucet
+   - Create vault → set strategies/allocations → deploy
+
+6. **Choose your deployment path**
+   - `WEB3_DEPLOYMENT.md` → best for direct wallet-based deployment flow
+   - `DEPLOYMENT_GUIDE.md` → best for backend API + Python SDK production architecture
+
+### Pre-mainnet checklist
+- [ ] Deployment succeeds on Sepolia
+- [ ] You can see tx hash and vault address in explorer
+- [ ] Fees/allocations are validated
+- [ ] Wallet has enough ETH for expected gas
+- [ ] Team agrees on mainnet network + asset selection
+
 ## 🔧 Key Components
 
 ### Alpha Bot
