@@ -1,11 +1,11 @@
 import { createPublicClient, createWalletClient, custom, http, formatEther, parseEther, encodeFunctionData, type Address, type Hash } from 'viem'
+import { mainnet, sepolia, arbitrum, polygon } from 'viem/chains'
 import { VaultConfig } from './types'
-import { VaultConfig } from './types'
 
-  polygon
-
-
-  address: 
+export const SUPPORTED_CHAINS = {
+  mainnet,
+  sepolia,
+  arbitrum,
   polygon
 } as const
 
@@ -20,11 +20,10 @@ export interface WalletInfo {
 }
 
 export interface DeploymentParams {
-    inputs: [
-  managementFee: number
-  performanceFee: number
-  isPublic: boolean
- 
+  config: VaultConfig
+  chainName: SupportedChain
+  account: Address
+}
 
 const IPOR_FUSION_FACTORY_ABI = [
   {
@@ -40,7 +39,7 @@ const IPOR_FUSION_FACTORY_ABI = [
       { name: 'strategies', type: 'bytes' }
     ],
     outputs: [{ name: 'vault', type: 'address' }]
-   
+  }
 ] as const
 
 const FACTORY_ADDRESSES: Record<SupportedChain, Address> = {
@@ -56,7 +55,7 @@ const ASSET_ADDRESSES: Record<string, Record<SupportedChain, Address>> = {
     sepolia: '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238',
     arbitrum: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
     polygon: '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359'
-
+  },
   USDT: {
     mainnet: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
     sepolia: '0x7169D38820dfd117C3FA1f22a697dBA58d90BA06',
@@ -68,17 +67,17 @@ const ASSET_ADDRESSES: Record<string, Record<SupportedChain, Address>> = {
     sepolia: '0xFF34B3d4Aee8ddCd6F9AFFFB6Fe49bD371b8a357',
     arbitrum: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
     polygon: '0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063'
-   
+  }
 }
 
 export function getChain(chainName: SupportedChain) {
-    }
+  return SUPPORTED_CHAINS[chainName]
 }
 
 export async function checkWalletConnection(): Promise<WalletInfo | null> {
   if (typeof window === 'undefined' || !window.ethereum) {
     throw new Error('No Web3 wallet detected')
-   
+  }
 
   try {
     const accounts = await window.ethereum.request({ 
@@ -90,49 +89,12 @@ export async function checkWalletConnection(): Promise<WalletInfo | null> {
     }
 
     const chainId = await window.ethereum.request({ 
-    const chainName = Object
-    }) as string
-
-    const balance = await window.ethereum.request({
-      chainId: chainIdNum,
-      params: [accounts[0], 'latest']
-      isConnecte
-
-    const chainIdNum = parseInt(chainId, 16)
-    const chainName = Object.entries(SUPPORTED_CHAINS).find(
-      ([_, chain]) => chain.id === chainIdNum
-    )?.[0] || 'unknown'
-
-    return {
-      address: accounts[0],
-      chainId: chainIdNum,
-  }
-      balance: formatEther(BigInt(balance)),
-  
-    }
-    chain,
-    console.error('Error checking wallet connection:', error)
-
-  }
- 
-
-export async function connectWallet(): Promise<WalletInfo> {
-  if (typeof window === 'undefined' || !window.ethereum) {
-    throw new Error('No Web3 wallet detected. Please install MetaMask or another Web3 wallet.')
-  }
-
-  try {
-  const managementFeeBps = Math.floor(config.manageme
-      method: 'eth_requestAccounts' 
-  const strategiesD
-
-    const chainId = await window.ethereum.request({ 
       method: 'eth_chainId' 
     }) as string
 
-    functionName: 'encodeStrategies',
+    const balance = await window.ethereum.request({
       method: 'eth_getBalance',
-
+      params: [accounts[0], 'latest']
     }) as string
 
     const chainIdNum = parseInt(chainId, 16)
@@ -144,19 +106,87 @@ export async function connectWallet(): Promise<WalletInfo> {
       address: accounts[0],
       chainId: chainIdNum,
       chainName,
-  const vaultAddress = receipt.logs[0]?.addr
+      balance: formatEther(BigInt(balance)),
       isConnected: true
-    t
+    }
+  } catch (error) {
+    console.error('Error checking wallet connection:', error)
+    return null
+  }
+}
+
+export async function connectWallet(): Promise<WalletInfo> {
+  if (typeof window === 'undefined' || !window.ethereum) {
+    throw new Error('No Web3 wallet detected. Please install MetaMask or another Web3 wallet.')
+  }
+
+  try {
+    const accounts = await window.ethereum.request({ 
+      method: 'eth_requestAccounts' 
+    }) as Address[]
+
+    const chainId = await window.ethereum.request({ 
+      method: 'eth_chainId' 
+    }) as string
+
+    const balance = await window.ethereum.request({
+      method: 'eth_getBalance',
+      params: [accounts[0], 'latest']
+    }) as string
+
+    const chainIdNum = parseInt(chainId, 16)
+    const chainName = Object.entries(SUPPORTED_CHAINS).find(
+      ([_, chain]) => chain.id === chainIdNum
+    )?.[0] || 'unknown'
+
+    return {
+      address: accounts[0],
+      chainId: chainIdNum,
+      chainName,
+      balance: formatEther(BigInt(balance)),
+      isConnected: true
+    }
   } catch (error) {
     console.error('Error connecting wallet:', error)
     throw new Error('Failed to connect wallet')
   }
 }
 
-export async function deployVault(
+export async function switchNetwork(chainName: SupportedChain): Promise<void> {
+  if (typeof window === 'undefined' || !window.ethereum) {
+    throw new Error('No Web3 wallet detected')
   }
+
+  const chain = SUPPORTED_CHAINS[chainName]
+  const chainIdHex = `0x${chain.id.toString(16)}`
+
+  try {
+    await window.ethereum.request({
+      method: 'wallet_switchEthereumChain',
+      params: [{ chainId: chainIdHex }]
+    })
+  } catch (error: any) {
+    if (error.code === 4902) {
+      await window.ethereum.request({
+        method: 'wallet_addEthereumChain',
+        params: [{
+          chainId: chainIdHex,
+          chainName: chain.name,
+          nativeCurrency: chain.nativeCurrency,
+          rpcUrls: [chain.rpcUrls.default.http[0]],
+          blockExplorerUrls: chain.blockExplorers ? [chain.blockExplorers.default.url] : undefined
+        }]
+      })
+    } else {
+      throw error
+    }
+  }
+}
+
+export async function deployVault(
+  config: VaultConfig,
   chainName: SupportedChain,
-  const chainIdHex
+  account: Address
 ): Promise<{ vaultAddress: Address; transactionHash: Hash }> {
   if (typeof window === 'undefined' || !window.ethereum) {
     throw new Error('No Web3 wallet detected')
@@ -164,15 +194,15 @@ export async function deployVault(
 
   const chain = SUPPORTED_CHAINS[chainName]
   
-          chainId: chainIdHex,
+  const walletClient = createWalletClient({
+    chain,
     account,
-          
     transport: custom(window.ethereum)
-    
+  })
 
   const publicClient = createPublicClient({
     chain,
-
+    transport: http()
   })
 
   const assetAddress = ASSET_ADDRESSES[config.asset]?.[chainName]
@@ -180,39 +210,38 @@ export async function deployVault(
     throw new Error(`Asset ${config.asset} not supported on ${chainName}`)
   }
 
-  hash: string
+  if (!account) {
     throw new Error('No account connected')
-  c
+  }
 
   const managementFeeBps = Math.floor(config.managementFee * 100)
   const performanceFeeBps = Math.floor(config.performanceFee * 100)
 
   const strategiesData = encodeFunctionData({
-declare gl
+    abi: [
       {
-      request: (args: { m
         name: 'encodeStrategies',
+        type: 'function',
         inputs: [{ name: 'strategies', type: 'string[]' }],
         outputs: [{ name: '', type: 'bytes' }]
-
+      }
     ],
     functionName: 'encodeStrategies',
-    args: [config.strategies.map(s => s.protocol)]
+    args: [config.strategies.map(s => s.strategyId)]
+  })
 
-
-
+  const hash = await walletClient.writeContract({
     address: FACTORY_ADDRESSES[chainName],
-
+    abi: IPOR_FUSION_FACTORY_ABI,
     functionName: 'createVault',
-
+    args: [
       config.name,
       assetAddress,
       BigInt(managementFeeBps),
       BigInt(performanceFeeBps),
       config.isPublic,
-
+      strategiesData
     ],
-
   })
 
   const receipt = await publicClient.waitForTransactionReceipt({ hash })
@@ -224,9 +253,17 @@ declare gl
   }
 
   return {
-
+    vaultAddress,
     transactionHash: hash
+  }
+}
 
+export async function deployVaultOnChain(
+  config: VaultConfig,
+  chainName: SupportedChain,
+  account: Address
+): Promise<{ vaultAddress: Address; transactionHash: Hash }> {
+  return deployVault(config, chainName, account)
 }
 
 export function getExplorerUrl(
@@ -234,13 +271,13 @@ export function getExplorerUrl(
   type: 'tx' | 'address',
   hash: string
 ): string {
-
+  const chain = SUPPORTED_CHAINS[chainName]
   const baseUrl = chain.blockExplorers?.default?.url || 'https://etherscan.io'
-
+  return `${baseUrl}/${type}/${hash}`
 }
 
-export function shortenAddress(address: string): string {
-  return `${address.slice(0, 6)}...${address.slice(-4)}`
+export function shortenAddress(address: string, chars: number = 4): string {
+  return `${address.slice(0, chars + 2)}...${address.slice(-chars)}`
 }
 
 declare global {
@@ -250,5 +287,5 @@ declare global {
       on: (event: string, handler: (...args: any[]) => void) => void
       removeListener: (event: string, handler: (...args: any[]) => void) => void
     }
-
+  }
 }
