@@ -423,8 +423,9 @@ export function CreateVaultDialog({ open, onOpenChange, onVaultCreate }: CreateV
                   <div>
                     <p className="text-sm text-muted-foreground mb-2">Role Assignments</p>
                     <div className="space-y-3">
-                      {(Object.entries(config.accessControl) as [string, string[]][]).map(([role, addresses]) => (
-                        addresses.length > 0 && (
+                      {(Object.entries(config.accessControl) as [string, string[]][])
+                        .filter(([_, addresses]) => addresses.length > 0)
+                        .map(([role, addresses]) => (
                           <div key={role} className="space-y-1">
                             <div className="flex items-center gap-2">
                               <Badge variant="outline" className="capitalize text-xs">{role}</Badge>
@@ -438,8 +439,7 @@ export function CreateVaultDialog({ open, onOpenChange, onVaultCreate }: CreateV
                               ))}
                             </div>
                           </div>
-                        )
-                      ))}
+                        ))}
                     </div>
                   </div>
                 )}

@@ -54,6 +54,16 @@ const ROLE_INFO: Record<VaultRole, { title: string; description: string; icon: R
   }
 }
 
+const getEmptyRoleMessage = (role: VaultRole): string => {
+  if (role === 'owner') {
+    return 'At least one Owner address is required. Owners have full control over the vault.'
+  }
+  
+  const roleTitle = ROLE_INFO[role].title
+  const purposeText = role === 'guardian' ? 'emergency controls' : 'operational efficiency'
+  return `No ${roleTitle} assigned. This role is optional but recommended for ${purposeText}.`
+}
+
 export function AccessControlManager({ accessControl, onAccessControlChange, disabled }: AccessControlManagerProps) {
   const [activeRole, setActiveRole] = useState<VaultRole>('owner')
   const [newAddress, setNewAddress] = useState('')
@@ -221,10 +231,7 @@ export function AccessControlManager({ accessControl, onAccessControlChange, dis
               <Alert>
                 <Warning size={16} weight="duotone" />
                 <AlertDescription className="text-xs">
-                  {role === 'owner' 
-                    ? 'At least one Owner address is required. Owners have full control over the vault.'
-                    : `No ${ROLE_INFO[role].title} assigned. This role is optional but recommended for ${role === 'guardian' ? 'emergency controls' : 'operational efficiency'}.`
-                  }
+                  {getEmptyRoleMessage(role)}
                 </AlertDescription>
               </Alert>
             )}
