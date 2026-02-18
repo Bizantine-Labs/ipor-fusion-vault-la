@@ -63,6 +63,23 @@ src/
 └── main.tsx                  # Application entry point
 ```
 
+## ⚙️ Deployment Setup (GitHub Pages)
+
+This repository includes an automated deployment workflow at `.github/workflows/deploy.yml`.
+
+### One-time setup
+1. Push this project to GitHub.
+2. In your repository settings, open **Pages**.
+3. Set **Source** to **GitHub Actions**.
+4. Ensure your default branch is `main` (or update the workflow trigger branch).
+
+### Deploy flow
+- Every push to `main` runs `npm ci` and `npm run build`.
+- The generated `dist/` folder is published to GitHub Pages automatically.
+- The Vite `base` path is set dynamically in CI from your repository name, so assets resolve correctly on Pages.
+
+You can also trigger deployments manually from the **Actions** tab using **Deploy to GitHub Pages**.
+
 ## 🚀 Deployment Ready
 
 This application is production-ready and can be deployed immediately. All features are fully functional:
