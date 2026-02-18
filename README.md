@@ -95,12 +95,17 @@ If you want to go from local app to live vault deployment, follow this order:
    - Use the **Connect Wallet** button in the app
    - Confirm your address and network in the header
 
-4. **Deploy safely on Sepolia first**
+4. **Configure real Fusion factory addresses before deploying**
+   - Open `src/lib/web3.ts`
+   - Replace each placeholder in `FACTORY_ADDRESSES` (`0x1234...`) with the real factory contract address for that chain
+   - Double-check addresses against the official IPOR/Fusion docs or your deployment source of truth
+
+5. **Deploy safely on Sepolia first**
    - Switch to **Sepolia** in wallet/app
    - Fund test ETH from a faucet
    - Create vault → set strategies/allocations → deploy
 
-5. **Choose your deployment path**
+6. **Choose your deployment path**
    - `WEB3_DEPLOYMENT.md` → best for direct wallet-based deployment flow
    - `DEPLOYMENT_GUIDE.md` → best for backend API + Python SDK production architecture
 
