@@ -131,7 +131,7 @@ export function AllowlistManager({ allowlist, onAllowlistChange, disabled }: All
         <Alert>
           <Warning size={16} weight="duotone" />
           <AlertDescription>
-            No addresses in allowlist. The vault creator will be the only one able to deposit.
+            No addresses in allowlist. Only explicitly allowed addresses will be able to deposit to this private vault.
           </AlertDescription>
         </Alert>
       )}
