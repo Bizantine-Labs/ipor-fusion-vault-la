@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Vault, TrendUp, TrendDown, Rocket } from '@phosphor-icons/react'
+import { Vault, TrendUp, TrendDown, Rocket, UserCheck } from '@phosphor-icons/react'
 import { Vault as VaultType } from '@/lib/types'
 import { motion } from 'framer-motion'
 import { getAssetIcon } from '@/components/AssetIcons'
@@ -42,6 +42,12 @@ export function VaultCard({ vault, onClick, onDeploy }: VaultCardProps) {
               <Badge variant={vault.isPublic ? 'default' : 'secondary'}>
                 {vault.isPublic ? 'Public' : 'Private'}
               </Badge>
+              {!vault.isPublic && vault.accessControl && (
+                <Badge variant="outline" className="text-xs flex items-center gap-1">
+                  <UserCheck size={12} weight="duotone" />
+                  {Object.values(vault.accessControl).reduce((sum, arr) => sum + arr.length, 0)} roles
+                </Badge>
+              )}
               {vault.deploymentStatus === 'mock' && onDeploy && (
                 <Badge variant="outline" className="text-xs border-accent/30 text-accent">
                   Not Deployed

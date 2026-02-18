@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge'
 import { StrategyCard } from './StrategyCard'
 import { AllocationSlider } from './AllocationSlider'
 import { RiskGauge } from './RiskGauge'
+import { AccessControlManager } from './AccessControlManager'
 import { AVAILABLE_STRATEGIES, ASSET_OPTIONS, calculateVaultRisk, calculateExpectedAPY } from '@/lib/strategies'
 import { VaultConfig } from '@/lib/types'
 import { CheckCircle, Warning, Funnel } from '@phosphor-icons/react'
@@ -32,6 +33,13 @@ export function CreateVaultDialog({ open, onOpenChange, onVaultCreate }: CreateV
     managementFee: 2,
     performanceFee: 20,
     isPublic: true,
+    allowlist: [],
+    accessControl: {
+      owner: [],
+      atomist: [],
+      alpha: [],
+      guardian: []
+    },
     strategies: []
   })
   const [strategyFilter, setStrategyFilter] = useState<string>('all')
@@ -95,6 +103,13 @@ export function CreateVaultDialog({ open, onOpenChange, onVaultCreate }: CreateV
       return
     }
 
+    // Validate that at least one owner is assigned for private vaults
+    if (!config.isPublic && (!config.accessControl?.owner || config.accessControl.owner.length === 0)) {
+      toast.error('At least one Owner must be assigned for private vaults')
+      setActiveTab('access')
+      return
+    }
+
     onVaultCreate(config as VaultConfig)
     toast.success('Vault created successfully!')
     onOpenChange(false)
@@ -106,6 +121,13 @@ export function CreateVaultDialog({ open, onOpenChange, onVaultCreate }: CreateV
       managementFee: 2,
       performanceFee: 20,
       isPublic: true,
+      allowlist: [],
+      accessControl: {
+        owner: [],
+        atomist: [],
+        alpha: [],
+        guardian: []
+      },
       strategies: []
     })
     setSelectedStrategies(new Set())
@@ -124,8 +146,11 @@ export function CreateVaultDialog({ open, onOpenChange, onVaultCreate }: CreateV
         </DialogHeader>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="basic">Basic Info</TabsTrigger>
+            <TabsTrigger value="access" disabled={!canProceedToStrategies}>
+              Access
+            </TabsTrigger>
             <TabsTrigger value="strategies" disabled={!canProceedToStrategies}>
               Strategies
             </TabsTrigger>
@@ -218,11 +243,70 @@ export function CreateVaultDialog({ open, onOpenChange, onVaultCreate }: CreateV
 
             <Button 
               className="w-full" 
-              onClick={() => setActiveTab('strategies')}
+              onClick={() => setActiveTab('access')}
               disabled={!canProceedToStrategies}
             >
-              Continue to Strategies
+              Continue to Access Control
             </Button>
+          </TabsContent>
+
+          <TabsContent value="access" className="space-y-6 mt-6">
+            <div className="space-y-6">
+              <div className="flex items-center justify-between p-4 border border-border rounded-lg">
+                <div>
+                  <Label htmlFor="is-public-access" className="text-base">Public Vault</Label>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Allow anyone to deposit into this vault
+                  </p>
+                </div>
+                <Switch
+                  id="is-public-access"
+                  checked={config.isPublic}
+                  onCheckedChange={(checked) => setConfig({ ...config, isPublic: checked })}
+                />
+              </div>
+
+              {!config.isPublic && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="border border-border rounded-lg p-6"
+                >
+                  <AccessControlManager
+                    accessControl={config.accessControl || { owner: [], atomist: [], alpha: [], guardian: [] }}
+                    onAccessControlChange={(accessControl) => setConfig({ ...config, accessControl })}
+                  />
+                </motion.div>
+              )}
+
+              {config.isPublic && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="p-4 bg-muted rounded-lg"
+                >
+                  <p className="text-sm text-muted-foreground">
+                    This is a public vault - anyone can deposit. To restrict access and use role-based permissions, toggle "Public Vault" off.
+                  </p>
+                </motion.div>
+              )}
+            </div>
+
+            <div className="flex gap-3">
+              <Button 
+                variant="outline"
+                className="flex-1" 
+                onClick={() => setActiveTab('basic')}
+              >
+                Back
+              </Button>
+              <Button 
+                className="flex-1" 
+                onClick={() => setActiveTab('strategies')}
+              >
+                Continue to Strategies
+              </Button>
+            </div>
           </TabsContent>
 
           <TabsContent value="strategies" className="space-y-6 mt-6">
@@ -315,7 +399,14 @@ export function CreateVaultDialog({ open, onOpenChange, onVaultCreate }: CreateV
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Access</p>
-                    <p className="font-medium">{config.isPublic ? 'Public' : 'Private'}</p>
+                    <div className="flex items-center gap-2">
+                      <p className="font-medium">{config.isPublic ? 'Public' : 'Private'}</p>
+                      {!config.isPublic && config.accessControl && (
+                        <Badge variant="outline" className="text-xs">
+                          {Object.values(config.accessControl).reduce((sum, arr) => sum + arr.length, 0)} roles assigned
+                        </Badge>
+                      )}
+                    </div>
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Strategies</p>
@@ -327,6 +418,31 @@ export function CreateVaultDialog({ open, onOpenChange, onVaultCreate }: CreateV
                   <p className="text-sm text-muted-foreground mb-2">Description</p>
                   <p className="text-sm">{config.description}</p>
                 </div>
+
+                {!config.isPublic && config.accessControl && (
+                  <div>
+                    <p className="text-sm text-muted-foreground mb-2">Role Assignments</p>
+                    <div className="space-y-3">
+                      {(Object.entries(config.accessControl) as [string, string[]][])
+                        .filter(([_, addresses]) => addresses.length > 0)
+                        .map(([role, addresses]) => (
+                          <div key={role} className="space-y-1">
+                            <div className="flex items-center gap-2">
+                              <Badge variant="outline" className="capitalize text-xs">{role}</Badge>
+                              <span className="text-xs text-muted-foreground">({addresses.length})</span>
+                            </div>
+                            <div className="pl-2 space-y-1 max-h-24 overflow-y-auto">
+                              {addresses.map((address, index) => (
+                                <code key={index} className="text-xs font-mono block bg-muted px-2 py-1 rounded">
+                                  {address}
+                                </code>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="border border-border rounded-lg p-6 space-y-4">

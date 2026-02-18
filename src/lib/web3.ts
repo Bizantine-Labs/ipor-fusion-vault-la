@@ -30,6 +30,17 @@ const IPOR_FUSION_FACTORY_ABI = [
       { name: 'managementFee', type: 'uint256' },
       { name: 'performanceFee', type: 'uint256' },
       { name: 'isPublic', type: 'bool' },
+      { name: 'allowlist', type: 'address[]' }, // Legacy support
+      { 
+        name: 'accessControl', 
+        type: 'tuple',
+        components: [
+          { name: 'owner', type: 'address[]' },
+          { name: 'atomist', type: 'address[]' },
+          { name: 'alpha', type: 'address[]' },
+          { name: 'guardian', type: 'address[]' }
+        ]
+      },
     ],
     outputs: [{ name: 'vault', type: 'address' }],
   },
@@ -217,6 +228,13 @@ export async function deployVault(
       managementFee,
       performanceFee,
       config.isPublic,
+      (config.allowlist || []) as Address[], // Legacy support
+      {
+        owner: (config.accessControl?.owner || []) as Address[],
+        atomist: (config.accessControl?.atomist || []) as Address[],
+        alpha: (config.accessControl?.alpha || []) as Address[],
+        guardian: (config.accessControl?.guardian || []) as Address[]
+      }
     ],
     account,
   })
