@@ -2,66 +2,66 @@ import { createPublicClient, createWalletClient, custom, http, formatEther, pars
 import { mainnet, sepolia, arbitrum, polygon } from 'viem/chains'
 import { VaultConfig } from './types'
 
-const SUPPORTED_CHAINS = {
   mainnet,
-  sepolia,
-  arbitrum,
-  polygon,
+  arbitrum
 } as const
+export type
+export int
+  chainId:
 
-export type SupportedChain = keyof typeof SUPPORTED_CHAINS
-
-export interface WalletInfo {
-  address: Address
-  chainId: number
-  chainName: string
-  balance: string
-  isConnected: boolean
 }
 
-export interface DeploymentParams {
-  name: string
   asset: string
-  managementFee: number
-  performanceFee: number
-  strategies: Array<{ strategyId: string; allocation: number }>
-  isPublic: boolean
-  initialDeposit: bigint
+  performanceFee: 
+  isPublic: boole
 }
-
-const IPOR_FUSION_FACTORY_ABI = [
-  {
+const IPOR_FUSION
     type: 'function',
-    name: 'createVault',
-    stateMutability: 'nonpayable',
-    inputs: [
-      { name: 'name', type: 'string' },
-      { name: 'asset', type: 'address' },
-      { name: 'managementFee', type: 'uint256' },
-      { name: 'performanceFee', type: 'uint256' },
-      { name: 'isPublic', type: 'bool' },
-      { name: 'strategies', type: 'bytes[]' }
+ 
+
+      { name: 'managementFee', type
+      { name: 
     ],
-    outputs: [{ name: 'vault', type: 'address' }]
   }
-] as const
 
-const FACTORY_ADDRESSES: Record<SupportedChain, Address> = {
   mainnet: '0x0000000000000000000000000000000000000000',
-  sepolia: '0x0000000000000000000000000000000000000000',
-  arbitrum: '0x0000000000000000000000000000000000000000',
-  polygon: '0x0000000000000000000000000000000000000000',
+  arbitrum: '0x0000
 }
+c
 
-const ASSET_ADDRESSES: Record<string, Record<SupportedChain, Address>> = {
-  USDC: {
-    mainnet: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
-    sepolia: '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238',
-    arbitrum: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
-    polygon: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
+    arbitrum: '0xaf88d065e77c8cC2
+  }
+    mainnet: '0xdAC17
+    arbitrum: '0xFd086bC
   },
-  USDT: {
-    mainnet: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
+    mainnet: 
+    arbitrum: '0xDA10009cBd5D07dd0CeCc6
+  }
+
+  return SUPPORTED_CHAINS[chainName]
+
+  if (typeof window === 'undefined' || !windo
+  }
+  try {
+   
+
+
+
+      method: 'eth_chainId' 
+
+      method: 'eth_getBalance',
+    }) as string
+ 
+
+
+      add
+      chainName,
+      isConnected: true
+  } catch (error) {
+    return null
+}
+export as
+    throw new Error('No Web3 wallet detected. Please insta
     sepolia: '0x7169D38820dfd117C3FA1f22a697dBA58d90BA06',
     arbitrum: '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9',
     polygon: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
@@ -126,132 +126,132 @@ export async function connectWallet(): Promise<WalletInfo> {
 
   try {
     const accounts = await window.ethereum.request({ 
-      method: 'eth_requestAccounts' 
-    }) as Address[]
-
-    if (accounts.length === 0) {
-      throw new Error('No accounts found. Please unlock your wallet.')
-    }
-
-    const chainId = await window.ethereum.request({ 
-      method: 'eth_chainId' 
-    }) as string
-
-    const balance = await window.ethereum.request({
-      method: 'eth_getBalance',
-      params: [accounts[0], 'latest']
-    }) as string
-
-    const chainIdNum = parseInt(chainId, 16)
-    const chainName = Object.entries(SUPPORTED_CHAINS).find(
-      ([_, chain]) => chain.id === chainIdNum
-    )?.[0] || 'unknown'
-
-    return {
-      address: accounts[0],
-      chainId: chainIdNum,
-      chainName,
-      balance: formatEther(BigInt(balance)),
-      isConnected: true
-    }
-  } catch (error: any) {
-    if (error.code === 4001) {
-      throw new Error('Connection request rejected. Please approve the connection in your wallet.')
-    }
-    throw new Error(error.message || 'Failed to connect wallet')
-  }
-}
-
-export async function switchNetwork(chainName: SupportedChain): Promise<void> {
-  if (typeof window === 'undefined' || !window.ethereum) {
-    throw new Error('No Web3 wallet detected')
-  }
-
-  const chain = SUPPORTED_CHAINS[chainName]
-  const chainIdHex = `0x${chain.id.toString(16)}`
-
-  try {
-    await window.ethereum.request({
-      method: 'wallet_switchEthereumChain',
-      params: [{ chainId: chainIdHex }],
-    })
-  } catch (error: any) {
-    if (error.code === 4902) {
-      try {
-        await window.ethereum.request({
-          method: 'wallet_addEthereumChain',
-          params: [
-            {
-              chainId: chainIdHex,
-              chainName: chain.name,
-              nativeCurrency: chain.nativeCurrency,
-              rpcUrls: [chain.rpcUrls.default.http[0]],
-              blockExplorerUrls: chain.blockExplorers?.default ? [chain.blockExplorers.default.url] : undefined,
             },
-          ],
         })
-      } catch (addError) {
-        throw new Error('Failed to add network to wallet')
-      }
+
     } else {
-      throw new Error(error.message || 'Failed to switch network')
     }
-  }
 }
 
-export async function deployVaultOnChain(
-  config: VaultConfig,
   chainName: SupportedChain,
-  initialDeposit: number = 0
-): Promise<{ vaultAddress: Address; transactionHash: Hash }> {
-  if (typeof window === 'undefined' || !window.ethereum) {
-    throw new Error('No Web3 wallet detected')
-  }
+): Promise<{ vaultAddress: A
+    throw new Er
 
-  const chain = SUPPORTED_CHAINS[chainName]
 
-  const walletClient = createWalletClient({
     chain,
-    transport: custom(window.ethereum)
   })
+  const publicCl
 
-  const publicClient = createPublicClient({
-    chain,
-    transport: http()
-  })
 
-  const [account] = await walletClient.getAddresses()
 
-  if (!account) {
     throw new Error('No account connected')
+
+
   }
+  const managementFeeBps = 
 
-  const assetAddress = ASSET_ADDRESSES[config.asset]?.[chainName]
-  if (!assetAddress) {
-    throw new Error(`Asset ${config.asset} not supported on ${chainName}`)
-  }
-
-  const managementFeeBps = Math.floor(config.managementFee * 10000)
-  const performanceFeeBps = Math.floor(config.performanceFee * 10000)
-
-  const strategiesData = config.strategies.map(s => 
-    encodeFunctionData({
-      abi: [{
+    encodeFuncti
         type: 'function',
-        name: 'encodeStrategy',
         inputs: [
-          { name: 'strategyId', type: 'bytes32' },
-          { name: 'allocation', type: 'uint256' }
-        ],
+     
         outputs: []
-      }],
-      functionName: 'encodeStrategy',
-      args: [s.strategyId as `0x${string}`, BigInt(Math.floor(s.allocation * 10000))]
+      functionName: 'encodeStr
     })
-  )
 
-  const hash = await walletClient.writeContract({
     address: FACTORY_ADDRESSES[chainName],
+   
+ 
+
+      config.isPublic,
+    ],
+  })
+  c
+
+  if (!vaultAddress) {
+  }
+
+    tra
+}
+export function getExplorerUrl(
+  type: 'tx' | 'address',
+): str
+  const baseUrl = chain.
+}
+export func
+}
+declare global {
+    ethereum?: {
+      on: (ev
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     abi: IPOR_FUSION_FACTORY_ABI,
     functionName: 'createVault',
     args: [
@@ -289,8 +289,8 @@ export function getExplorerUrl(
   return `${baseUrl}/${type}/${hash}`
 }
 
-export function shortenAddress(address: string, chars: number = 4): string {
-  return `${address.slice(0, chars + 2)}...${address.slice(-chars)}`
+export function shortenAddress(address: string): string {
+  return `${address.slice(0, 6)}...${address.slice(-4)}`
 }
 
 declare global {
