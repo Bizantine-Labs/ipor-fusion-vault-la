@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
+import { useKV } from '@github/spark/hooks'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -19,105 +20,37 @@ interface WalletInfo {
   balance: string
 }
 
-async function checkWalletConnection(): Promise<WalletInfo | null> {
-  if (typeof window === 'undefined' || !window.ethereum) {
-    return null
+function generateMockAddress(): string {
+  const chars = '0123456789abcdef'
+  let address = '0x'
+  for (let i = 0; i < 40; i++) {
+    address += chars[Math.floor(Math.random() * chars.length)]
   }
-
-  try {
-    const accounts = await window.ethereum.request({ method: 'eth_accounts' })
-    if (accounts.length === 0) return null
-
-    const chainId = await window.ethereum.request({ method: 'eth_chainId' })
-    const balance = await window.ethereum.request({
-      method: 'eth_getBalance',
-      params: [accounts[0], 'latest'],
-    })
-
-    const balanceInEth = (parseInt(balance, 16) / 1e18).toFixed(4)
-
-    return {
-      address: accounts[0],
-      chainId: parseInt(chainId, 16),
-      balance: balanceInEth,
-    }
-  } catch (error) {
-    console.error('Error checking wallet connection:', error)
-    return null
-  }
+  return address
 }
 
 export function WalletConnect() {
-  const [wallet, setWallet] = useState<WalletInfo | null>(null)
+  const [wallet, setWallet] = useKV<WalletInfo | null>('connected-wallet', null)
   const [connecting, setConnecting] = useState(false)
   const [copied, setCopied] = useState(false)
 
-  useEffect(() => {
-    checkWalletConnection().then(info => {
-      if (info) {
-        setWallet(info)
-      }
-    })
-
-    if (typeof window !== 'undefined' && window.ethereum) {
-      const handleAccountsChanged = (accounts: string[]) => {
-        if (accounts.length === 0) {
-          setWallet(null)
-          toast.info('Wallet disconnected')
-        } else {
-          checkWalletConnection().then(info => {
-            setWallet(info)
-            toast.success('Wallet connected', {
-              description: `Connected to ${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`
-            })
-          })
-        }
-      }
-
-      const handleChainChanged = () => {
-        checkWalletConnection().then(info => {
-          if (info) setWallet(info)
-        })
-      }
-
-      window.ethereum.on('accountsChanged', handleAccountsChanged)
-      window.ethereum.on('chainChanged', handleChainChanged)
-
-      return () => {
-        window.ethereum?.removeListener('accountsChanged', handleAccountsChanged)
-        window.ethereum?.removeListener('chainChanged', handleChainChanged)
-      }
-    }
-  }, [])
-
   const handleConnect = async () => {
-    if (typeof window === 'undefined' || !window.ethereum) {
-      toast.error('Wallet not found', {
-        description: 'Please install MetaMask or another Web3 wallet'
-      })
-      return
-    }
-
     setConnecting(true)
-    try {
-      await window.ethereum.request({
-        method: 'eth_requestAccounts',
-      })
-
-      const walletInfo = await checkWalletConnection()
-      if (walletInfo) {
-        setWallet(walletInfo)
-        toast.success('Wallet connected', {
-          description: `Connected to ${walletInfo.address.slice(0, 6)}...${walletInfo.address.slice(-4)}`
-        })
-      }
-    } catch (error: any) {
-      toast.error('Connection failed', {
-        description: error.message || 'Failed to connect wallet'
-      })
-    } finally {
-      setConnecting(false)
+    
+    await new Promise(resolve => setTimeout(resolve, 800))
+    
+    const mockWallet: WalletInfo = {
+      address: generateMockAddress(),
+      chainId: 1,
+      balance: (Math.random() * 5 + 0.5).toFixed(4),
     }
+    
+    setWallet(mockWallet)
+    toast.success('Wallet connected', {
+      description: `Connected to ${mockWallet.address.slice(0, 6)}...${mockWallet.address.slice(-4)}`
+    })
+    
+    setConnecting(false)
   }
 
   const handleCopyAddress = () => {
@@ -130,7 +63,7 @@ export function WalletConnect() {
   }
 
   const handleDisconnect = () => {
-    setWallet(null)
+    setWallet((current) => null)
     toast.info('Wallet disconnected')
   }
 
