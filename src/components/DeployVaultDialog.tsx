@@ -12,7 +12,7 @@ import {
   connectWallet, 
   switchNetwork, 
   deployVaultOnChain, 
-  getBlockExplorerUrl, 
+  getExplorerUrl, 
   shortenAddress,
   type SupportedChain 
 } from '@/lib/web3'
@@ -364,7 +364,7 @@ export function DeployVaultDialog({ open, onOpenChange, vault, onDeploySuccess }
                               variant="outline"
                               size="sm"
                               onClick={() => {
-                                const url = getBlockExplorerUrl(network, 'tx', deploymentResult.transactionHash!)
+                                const url = getExplorerUrl(network, 'tx', deploymentResult.transactionHash!)
                                 window.open(url, '_blank')
                               }}
                             >
