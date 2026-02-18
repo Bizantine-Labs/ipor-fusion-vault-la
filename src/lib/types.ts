@@ -21,6 +21,7 @@ export interface VaultConfig {
   managementFee: number
   performanceFee: number
   isPublic: boolean
+  allowlist: string[]
   strategies: StrategyAllocation[]
 }
 

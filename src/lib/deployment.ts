@@ -86,6 +86,7 @@ export async function deployVault(config: DeploymentConfig): Promise<DeploymentR
       performanceFee: config.vault.performanceFee,
       strategies: config.vault.strategies,
       isPublic: config.vault.isPublic,
+      allowlist: config.vault.allowlist || [],
       initialDeposit: config.initialDeposit || 0
     }
 

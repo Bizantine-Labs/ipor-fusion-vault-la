@@ -30,6 +30,7 @@ const IPOR_FUSION_FACTORY_ABI = [
       { name: 'managementFee', type: 'uint256' },
       { name: 'performanceFee', type: 'uint256' },
       { name: 'isPublic', type: 'bool' },
+      { name: 'allowlist', type: 'address[]' },
     ],
     outputs: [{ name: 'vault', type: 'address' }],
   },
@@ -217,6 +218,7 @@ export async function deployVault(
       managementFee,
       performanceFee,
       config.isPublic,
+      (config.allowlist || []) as Address[],
     ],
     account,
   })
