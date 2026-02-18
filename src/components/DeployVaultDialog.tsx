@@ -101,7 +101,7 @@ export function DeployVaultDialog({ open, onOpenChange, vault, onDeploySuccess }
       const result = await deployVaultOnChain(
         vault, 
         network, 
-        parseFloat(initialDeposit) || 0
+        walletInfo.address
       )
 
       setDeploymentResult({
