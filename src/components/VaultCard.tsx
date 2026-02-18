@@ -42,10 +42,10 @@ export function VaultCard({ vault, onClick, onDeploy }: VaultCardProps) {
               <Badge variant={vault.isPublic ? 'default' : 'secondary'}>
                 {vault.isPublic ? 'Public' : 'Private'}
               </Badge>
-              {!vault.isPublic && vault.allowlist && vault.allowlist.length > 0 && (
+              {!vault.isPublic && vault.accessControl && (
                 <Badge variant="outline" className="text-xs flex items-center gap-1">
                   <UserCheck size={12} weight="duotone" />
-                  {vault.allowlist.length}
+                  {Object.values(vault.accessControl).reduce((sum, arr) => sum + arr.length, 0)} roles
                 </Badge>
               )}
               {vault.deploymentStatus === 'mock' && onDeploy && (

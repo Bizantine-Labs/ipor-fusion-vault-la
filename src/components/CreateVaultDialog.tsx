@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge'
 import { StrategyCard } from './StrategyCard'
 import { AllocationSlider } from './AllocationSlider'
 import { RiskGauge } from './RiskGauge'
-import { AllowlistManager } from './AllowlistManager'
+import { AccessControlManager } from './AccessControlManager'
 import { AVAILABLE_STRATEGIES, ASSET_OPTIONS, calculateVaultRisk, calculateExpectedAPY } from '@/lib/strategies'
 import { VaultConfig } from '@/lib/types'
 import { CheckCircle, Warning, Funnel } from '@phosphor-icons/react'
@@ -34,6 +34,12 @@ export function CreateVaultDialog({ open, onOpenChange, onVaultCreate }: CreateV
     performanceFee: 20,
     isPublic: true,
     allowlist: [],
+    accessControl: {
+      owner: [],
+      atomist: [],
+      alpha: [],
+      guardian: []
+    },
     strategies: []
   })
   const [strategyFilter, setStrategyFilter] = useState<string>('all')
@@ -97,6 +103,13 @@ export function CreateVaultDialog({ open, onOpenChange, onVaultCreate }: CreateV
       return
     }
 
+    // Validate that at least one owner is assigned for private vaults
+    if (!config.isPublic && (!config.accessControl?.owner || config.accessControl.owner.length === 0)) {
+      toast.error('At least one Owner must be assigned for private vaults')
+      setActiveTab('access')
+      return
+    }
+
     onVaultCreate(config as VaultConfig)
     toast.success('Vault created successfully!')
     onOpenChange(false)
@@ -109,6 +122,12 @@ export function CreateVaultDialog({ open, onOpenChange, onVaultCreate }: CreateV
       performanceFee: 20,
       isPublic: true,
       allowlist: [],
+      accessControl: {
+        owner: [],
+        atomist: [],
+        alpha: [],
+        guardian: []
+      },
       strategies: []
     })
     setSelectedStrategies(new Set())
@@ -253,9 +272,9 @@ export function CreateVaultDialog({ open, onOpenChange, onVaultCreate }: CreateV
                   animate={{ opacity: 1, y: 0 }}
                   className="border border-border rounded-lg p-6"
                 >
-                  <AllowlistManager
-                    allowlist={config.allowlist || []}
-                    onAllowlistChange={(addresses) => setConfig({ ...config, allowlist: addresses })}
+                  <AccessControlManager
+                    accessControl={config.accessControl || { owner: [], atomist: [], alpha: [], guardian: [] }}
+                    onAccessControlChange={(accessControl) => setConfig({ ...config, accessControl })}
                   />
                 </motion.div>
               )}
@@ -267,7 +286,7 @@ export function CreateVaultDialog({ open, onOpenChange, onVaultCreate }: CreateV
                   className="p-4 bg-muted rounded-lg"
                 >
                   <p className="text-sm text-muted-foreground">
-                    This is a public vault - anyone can deposit. To restrict access, toggle "Public Vault" off.
+                    This is a public vault - anyone can deposit. To restrict access and use role-based permissions, toggle "Public Vault" off.
                   </p>
                 </motion.div>
               )}
@@ -382,9 +401,9 @@ export function CreateVaultDialog({ open, onOpenChange, onVaultCreate }: CreateV
                     <p className="text-sm text-muted-foreground">Access</p>
                     <div className="flex items-center gap-2">
                       <p className="font-medium">{config.isPublic ? 'Public' : 'Private'}</p>
-                      {!config.isPublic && config.allowlist && config.allowlist.length > 0 && (
+                      {!config.isPublic && config.accessControl && (
                         <Badge variant="outline" className="text-xs">
-                          {config.allowlist.length} {config.allowlist.length === 1 ? 'address' : 'addresses'}
+                          {Object.values(config.accessControl).reduce((sum, arr) => sum + arr.length, 0)} roles assigned
                         </Badge>
                       )}
                     </div>
@@ -400,14 +419,26 @@ export function CreateVaultDialog({ open, onOpenChange, onVaultCreate }: CreateV
                   <p className="text-sm">{config.description}</p>
                 </div>
 
-                {!config.isPublic && config.allowlist && config.allowlist.length > 0 && (
+                {!config.isPublic && config.accessControl && (
                   <div>
-                    <p className="text-sm text-muted-foreground mb-2">Allowlist ({config.allowlist.length})</p>
-                    <div className="space-y-1 max-h-32 overflow-y-auto">
-                      {config.allowlist.map((address, index) => (
-                        <code key={index} className="text-xs font-mono block bg-muted px-2 py-1 rounded">
-                          {address}
-                        </code>
+                    <p className="text-sm text-muted-foreground mb-2">Role Assignments</p>
+                    <div className="space-y-3">
+                      {(Object.entries(config.accessControl) as [string, string[]][]).map(([role, addresses]) => (
+                        addresses.length > 0 && (
+                          <div key={role} className="space-y-1">
+                            <div className="flex items-center gap-2">
+                              <Badge variant="outline" className="capitalize text-xs">{role}</Badge>
+                              <span className="text-xs text-muted-foreground">({addresses.length})</span>
+                            </div>
+                            <div className="pl-2 space-y-1 max-h-24 overflow-y-auto">
+                              {addresses.map((address, index) => (
+                                <code key={index} className="text-xs font-mono block bg-muted px-2 py-1 rounded">
+                                  {address}
+                                </code>
+                              ))}
+                            </div>
+                          </div>
+                        )
                       ))}
                     </div>
                   </div>

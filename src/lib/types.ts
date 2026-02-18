@@ -14,6 +14,13 @@ export interface StrategyAllocation {
   allocation: number
 }
 
+export type VaultRole = 'owner' | 'atomist' | 'alpha' | 'guardian'
+
+export interface RoleAssignment {
+  address: string
+  role: VaultRole
+}
+
 export interface VaultConfig {
   name: string
   description: string
@@ -21,7 +28,13 @@ export interface VaultConfig {
   managementFee: number
   performanceFee: number
   isPublic: boolean
-  allowlist: string[]
+  allowlist: string[] // Deprecated: Use accessControl instead
+  accessControl?: {
+    owner: string[]
+    atomist: string[]
+    alpha: string[]
+    guardian: string[]
+  }
   strategies: StrategyAllocation[]
 }
 

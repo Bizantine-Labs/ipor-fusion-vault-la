@@ -86,7 +86,8 @@ export async function deployVault(config: DeploymentConfig): Promise<DeploymentR
       performanceFee: config.vault.performanceFee,
       strategies: config.vault.strategies,
       isPublic: config.vault.isPublic,
-      allowlist: config.vault.allowlist || [],
+      allowlist: config.vault.allowlist || [], // Legacy support
+      accessControl: config.vault.accessControl || { owner: [], atomist: [], alpha: [], guardian: [] },
       initialDeposit: config.initialDeposit || 0
     }
 
