@@ -12,7 +12,6 @@ import {
   connectWallet, 
   switchNetwork, 
   deployVaultOnChain, 
-  estimateDeploymentGas,
   getBlockExplorerUrl, 
   shortenAddress,
   type SupportedChain 
@@ -71,26 +70,6 @@ export function DeployVaultDialog({ open, onOpenChange, vault, onDeploySuccess }
       })
     } finally {
       setConnecting(false)
-    }
-  }
-
-  const handleEstimateGas = async () => {
-    if (!walletConnected) {
-      toast.error('Please connect your wallet first')
-      return
-    }
-
-    try {
-      const estimate = await estimateDeploymentGas(vault, network)
-      setGasEstimate({
-        gasLimit: estimate.gasLimit.toLocaleString(),
-        estimatedCost: estimate.gasCostEth
-      })
-      toast.success('Gas estimation complete')
-    } catch (error: any) {
-      toast.error('Gas estimation failed', {
-        description: error.message || 'Failed to estimate gas'
-      })
     }
   }
 
@@ -310,16 +289,8 @@ export function DeployVaultDialog({ open, onOpenChange, vault, onDeploySuccess }
 
                 <div className="flex gap-3 pt-4">
                   <Button
-                    variant="outline"
-                    onClick={handleEstimateGas}
-                    className="flex-1"
-                    disabled={deploying || !walletConnected}
-                  >
-                    Estimate Gas
-                  </Button>
-                  <Button
                     onClick={handleDeploy}
-                    className="flex-1 bg-accent text-accent-foreground hover:bg-accent/90 gap-2"
+                    className="w-full bg-accent text-accent-foreground hover:bg-accent/90 gap-2"
                     disabled={deploying || !walletConnected}
                   >
                     {deploying ? (

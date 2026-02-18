@@ -1,19 +1,19 @@
 import { createPublicClient, createWalletClient, custom, http, formatEther, parseEther, encodeFunctionData, type Address, type Hash } from 'viem'
 import { mainnet, sepolia, arbitrum, polygon } from 'viem/chains'
+import { VaultConfig } from './types'
 
-
+export const SUPPORTED_CHAINS = {
+  mainnet,
+  sepolia,
   arbitrum,
+  polygon,
 } as const
-export typ
-export inte
-  chainId
-  balance:
 
-export interface DeploymentParams {
+export type SupportedChain = keyof typeof SUPPORTED_CHAINS
 
-  performanceFee: number
-  isPublic: boolea
-}
+export interface WalletInfo {
+  address: Address
+  chainId: number
   chainName: string
   balance: string
   isConnected: boolean
@@ -30,93 +30,84 @@ export interface DeploymentParams {
 }
 
 const IPOR_FUSION_FACTORY_ABI = [
-   
+  {
+    type: 'function',
+    name: 'createVault',
+    stateMutability: 'nonpayable',
     inputs: [
-      { name: 'asset', t
-    ]
+      { name: 'name', type: 'string' },
+      { name: 'asset', type: 'address' },
+      { name: 'managementFee', type: 'uint256' },
+      { name: 'performanceFee', type: 'uint256' },
+      { name: 'isPublic', type: 'bool' },
+      { name: 'strategies', type: 'bytes[]' }
+    ],
+    outputs: [{ name: 'vault', type: 'address' }]
+  }
 ] as const
-const FACTORY_ADDRESSES: Record<Support
-  sepolia: '0x000000000000000000000000000
-  polygon: '0x00000000000000000000000000000000000
 
+const FACTORY_ADDRESSES: Record<SupportedChain, Address> = {
+  mainnet: '0x0000000000000000000000000000000000000000',
+  sepolia: '0x0000000000000000000000000000000000000000',
+  arbitrum: '0x0000000000000000000000000000000000000000',
+  polygon: '0x0000000000000000000000000000000000000000',
+}
+
+const ASSET_ADDRESSES: Record<string, Record<SupportedChain, Address>> = {
   USDC: {
-    sepolia: '0x1c7D4B196Cb0C7B01d743Fbc6116a
-    po
+    mainnet: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+    sepolia: '0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238',
+    arbitrum: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
+    polygon: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174',
+  },
   USDT: {
-    
-   
+    mainnet: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
+    sepolia: '0x7169D38820dfd117C3FA1f22a697dBA58d90BA06',
+    arbitrum: '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9',
+    polygon: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F',
+  },
   DAI: {
-    sepolia: '0xFF34B3d4A
-    polygon: 
+    mainnet: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
+    sepolia: '0xFF34B3d4Aee8ddCd6F9AFFFB6Fe49bD371b8a357',
+    arbitrum: '0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1',
+    polygon: '0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063',
+  }
 }
+
 export function getChain(chainName: SupportedChain) {
+  return SUPPORTED_CHAINS[chainName]
 }
-expor
-   
 
-
-    }) as Address[]
-    if (accounts.length === 0) {
-    }
-    const chainId = await window.ethereum.request({ 
-    }) as string
- 
-
-
-    const
-    )?.[0] || 'unknown'
-    return {
-      chainId: chainIdNum,
-      balance: formatEther(BigInt(balance)),
-    
-    conso
-  }
-
+export async function checkWalletConnection(): Promise<WalletInfo | null> {
   if (typeof window === 'undefined' || !window.ethereum) {
+    return null
   }
-  tr
-      me
-
-      throw new Error('No accounts found. Please unlock yo
-
-      method: 'eth_chainId' 
-
- 
-
-    const chainIdNum = parseInt(chainId, 16)
-      ([_, chain]) => chain.id === c
-
-
-      chainName,
-      isConnected: true
-  } catch (erro
-   
-
-}
-export async function switchNetwork(chainName: Suppor
-    throw new Error('No Web3 
-
 
   try {
-      method: 'wa
+    const accounts = await window.ethereum.request({ 
+      method: 'eth_accounts' 
+    }) as Address[]
+
+    if (accounts.length === 0) {
+      return null
     }
 
-        await window.ethereum.request({
-          params: [
-              ch
+    const chainId = await window.ethereum.request({ 
+      method: 'eth_chainId' 
+    }) as string
 
-              blockExplorerUrls: chain.blockExplore
-          ],
-      } catch (addError) {
-      }
+    const balance = await window.ethereum.request({
+      method: 'eth_getBalance',
+      params: [accounts[0], 'latest']
+    }) as string
 
-  }
+    const chainIdNum = parseInt(chainId, 16)
+    const chainName = Object.entries(SUPPORTED_CHAINS).find(
+      ([_, chain]) => chain.id === chainIdNum
+    )?.[0] || 'unknown'
 
-  config: VaultConfig,
-  initialDeposit: numbe
-
-  }
-  const chain = SUPPORTED_C
+    return {
+      address: accounts[0],
       chainId: chainIdNum,
       chainName,
       balance: formatEther(BigInt(balance)),
@@ -277,126 +268,38 @@ export async function deployVaultOnChain(
 
   const receipt = await publicClient.waitForTransactionReceipt({ hash })
 
+  const vaultAddress = receipt.logs[0]?.address as Address
+  
+  if (!vaultAddress) {
+    throw new Error('Failed to retrieve vault address from transaction')
+  }
 
-  const c
-  return `${baseUrl}/${type}/${hash}`
-
-  return `${address
-
-  interface Window {
-      request
-      removeListen
-    }
+  return {
+    vaultAddress,
+    transactionHash: hash
+  }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+export function getBlockExplorerUrl(
+  chainName: SupportedChain,
+  type: 'tx' | 'address',
+  hash: string
+): string {
+  const chain = SUPPORTED_CHAINS[chainName]
+  const baseUrl = chain.blockExplorers?.default?.url || 'https://etherscan.io'
+  return `${baseUrl}/${type}/${hash}`
+}
+
+export function shortenAddress(address: string, chars: number = 4): string {
+  return `${address.slice(0, chars + 2)}...${address.slice(-chars)}`
+}
+
+declare global {
+  interface Window {
+    ethereum?: {
+      request: (args: { method: string; params?: any[] }) => Promise<any>
+      on: (event: string, handler: (...args: any[]) => void) => void
+      removeListener: (event: string, handler: (...args: any[]) => void) => void
+    }
+  }
+}
