@@ -68,6 +68,9 @@ export function WalletConnect() {
     setConnecting(true)
     try {
       const walletInfo = await connectWallet()
+      if (!walletInfo) {
+        throw new Error('Failed to retrieve wallet information')
+      }
       setWallet(walletInfo)
       toast.success('Wallet connected', {
         description: `Connected to ${shortenAddress(walletInfo.address)}`

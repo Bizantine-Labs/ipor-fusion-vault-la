@@ -59,6 +59,9 @@ export function DeployVaultDialog({ open, onOpenChange, vault, onDeploySuccess }
     setConnecting(true)
     try {
       const walletInfo = await connectWallet()
+      if (!walletInfo) {
+        throw new Error('Failed to retrieve wallet information')
+      }
       setWalletConnected(true)
       setWalletAddress(walletInfo.address)
       toast.success('Wallet connected', {
