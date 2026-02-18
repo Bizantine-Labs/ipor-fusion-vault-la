@@ -362,7 +362,7 @@ export function CreateVaultDialog({ open, onOpenChange, onVaultCreate }: CreateV
             </div>
 
             <div className="flex gap-3">
-              <Button variant="outline" onClick={() => setActiveTab('basic')} className="flex-1">
+              <Button variant="outline" onClick={() => setActiveTab('access')} className="flex-1">
                 Back
               </Button>
               <Button 
