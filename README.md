@@ -2,6 +2,30 @@
 
 A sophisticated DeFi vault management platform built on IPOR Fusion that enables users to create and configure advanced vaults combining interest rate derivatives with multi-protocol yield strategies.
 
+## 🎯 Quick Start: Access the Vault NOW
+
+**The vault is ready to use!** Choose your access method:
+
+### 🖥️ Local Development
+```bash
+npm install
+npm run dev
+```
+Then open: **http://localhost:5000/ipor-fusion-vault-la/**
+
+### 🌐 Production (GitHub Pages)
+Access the live deployment at: `https://[your-github-username].github.io/ipor-fusion-vault-la/`
+
+### 📖 Complete Access Guide
+See **[ACCESS_GUIDE.md](ACCESS_GUIDE.md)** for detailed instructions including:
+- Step-by-step setup
+- Wallet connection
+- Feature walkthrough
+- Troubleshooting tips
+- Development commands
+
+**Ready in 30 seconds:** Just run `npm install && npm run dev` and start creating vaults!
+
 ## ✨ Features
 
 ### Core Functionality
