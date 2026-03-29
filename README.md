@@ -2,6 +2,21 @@
 
 A sophisticated DeFi vault management platform built on IPOR Fusion that enables users to create and configure advanced vaults combining interest rate derivatives with multi-protocol yield strategies.
 
+## 🎯 Quick Start - Access the Vault Now!
+
+**✅ The vault is running!** Access it at: **http://localhost:5000**
+
+📖 **See [ACCESS.md](ACCESS.md) for complete access instructions and documentation.**
+
+### Quick Commands
+```bash
+# Start the vault (if not running)
+npm run dev
+
+# Access the application
+# Open your browser and navigate to: http://localhost:5000
+```
+
 ## ✨ Features
 
 ### Core Functionality
