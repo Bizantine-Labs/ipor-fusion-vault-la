@@ -1,0 +1,31 @@
+{
+  "fuses": {
+    "morpho_supply": {
+      "type": "MorphoSupplyFuse",
+      "venue": "morpho",
+      "chain_addresses": {
+        "ethereum": "0x0000000000000000000000000000000000000000",
+        "base": "0x0000000000000000000000000000000000000000"
+      }
+    },
+    "euler_supply": {
+      "type": "EulerSupplyFuse",
+      "venue": "euler",
+      "chain_addresses": {
+        "ethereum": "0x0000000000000000000000000000000000000000",
+        "base": "0x0000000000000000000000000000000000000000"
+      },
+      "status": "todo_action_builder"
+    },
+    "superform_usdt0_supply": {
+      "type": "SuperformUSDT0SupplyFuse",
+      "venue": "superform_usdt0",
+      "chain_addresses": {
+        "ethereum": "0x0000000000000000000000000000000000000000",
+        "base": "0x0000000000000000000000000000000000000000",
+        "flare": "0x0000000000000000000000000000000000000000"
+      },
+      "status": "todo_action_builder"
+    }
+  }
+}

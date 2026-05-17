@@ -1,0 +1,26 @@
+{
+  "asset": "USDC",
+  "manual_approval_required": true,
+  "execute_by_default": false,
+  "rules": {
+    "no_leverage": true,
+    "no_recursive_loops": true,
+    "no_unapproved_routes": true
+  },
+  "venues": {
+    "morpho": { "target_bps": 4000, "max_bps": 4500 },
+    "euler": { "target_bps": 3000, "max_bps": 3500 },
+    "superform_usdt0": { "target_bps": 2000, "max_bps": 2500 },
+    "idle": { "target_bps": 1000, "min_bps": 500 }
+  },
+  "limits": {
+    "max_single_market_bps": 2000,
+    "max_single_chain_bps": 5000,
+    "max_flare_bps": 2500
+  },
+  "rebalance": {
+    "min_trade_usdc": 1000,
+    "drift_threshold_bps": 100,
+    "prefer_highest_net_apy": true
+  }
+}
