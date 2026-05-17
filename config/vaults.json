@@ -1,0 +1,25 @@
+{
+  "default_vault": "usdc_plasma_vault",
+  "vaults": {
+    "usdc_plasma_vault": {
+      "name": "USDC Plasma Vault",
+      "accounting_asset": "USDC",
+      "accounting_asset_decimals": 6,
+      "chain": "ethereum",
+      "chain_id": 1,
+      "address": "0x0000000000000000000000000000000000000000",
+      "rpc_env": "ETHEREUM_RPC_URL",
+      "current_allocations_bps": {
+        "morpho": 0,
+        "euler": 0,
+        "superform_usdt0": 0,
+        "idle": 10000
+      }
+    }
+  },
+  "chains": {
+    "ethereum": { "chain_id": 1, "rpc_env": "ETHEREUM_RPC_URL", "supported": true },
+    "base": { "chain_id": 8453, "rpc_env": "BASE_RPC_URL", "supported": true },
+    "flare": { "chain_id": 14, "rpc_env": "FLARE_RPC_URL", "supported": "where_ipor_fusion_supported" }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "markets": [
+    {
+      "id": "morpho-ethereum-usdc-example",
+      "venue": "morpho",
+      "chain": "ethereum",
+      "asset": "USDC",
+      "enabled": false,
+      "market_address": "0x0000000000000000000000000000000000000000",
+      "fuse": "morpho_supply",
+      "net_apy": 0.0,
+      "notes": "Replace with a governance-approved Morpho USDC market before enabling.",
+      "action_params": {}
+    },
+    {
+      "id": "euler-base-usdc-example",
+      "venue": "euler",
+      "chain": "base",
+      "asset": "USDC",
+      "enabled": false,
+      "market_address": "0x0000000000000000000000000000000000000000",
+      "fuse": "euler_supply",
+      "net_apy": 0.0,
+      "notes": "TODO: add Euler fuse action mapping after approval."
+    },
+    {
+      "id": "superform-flare-usdt0-example",
+      "venue": "superform_usdt0",
+      "chain": "flare",
+      "asset": "USDC",
+      "enabled": false,
+      "market_address": "0x0000000000000000000000000000000000000000",
+      "fuse": "superform_usdt0_supply",
+      "net_apy": 0.0,
+      "notes": "TODO: add Superform/USDT0 fuse action mapping after approval and chain support confirmation."
+    }
+  ]
+}
